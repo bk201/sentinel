@@ -1,0 +1,139 @@
+#root {
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  text-align: left;
+}
+
+.app {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: #000000;
+}
+
+.app-main {
+  flex: 1;
+  padding: 0;
+  max-width: 100%;
+  width: 100%;
+  margin: 0 auto;
+  position: relative;
+}
+
+/* Modern button system inspired by Google Material Design */
+button {
+  font-family: var(--font-family);
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  padding: var(--space-3) var(--space-6);
+  border-radius: var(--radius-md);
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+  outline: none;
+}
+
+.btn-primary {
+  background: var(--primary-color);
+  color: white;
+  box-shadow: var(--elevation-1);
+}
+
+.btn-primary:hover {
+  background: var(--primary-dark);
+  box-shadow: var(--elevation-2);
+  transform: translateY(-1px);
+}
+
+.btn-secondary {
+  background: var(--surface-color);
+  color: var(--primary-color);
+  border: 1px solid var(--outline);
+}
+
+.btn-secondary:hover {
+  background: var(--surface-container);
+  box-shadow: var(--elevation-1);
+}
+
+.btn-outlined {
+  background: transparent;
+  color: var(--primary-color);
+  border: 1px solid var(--primary-color);
+}
+
+.btn-outlined:hover {
+  background: rgba(26, 115, 232, 0.04);
+}
+
+.btn-text {
+  background: transparent;
+  color: var(--primary-color);
+  padding: var(--space-2) var(--space-4);
+}
+
+.btn-text:hover {
+  background: rgba(26, 115, 232, 0.04);
+}
+
+.btn-small {
+  padding: var(--space-2) var(--space-4);
+  font-size: var(--font-size-xs);
+}
+
+.btn-large {
+  padding: var(--space-4) var(--space-8);
+  font-size: var(--font-size-lg);
+}
+
+button:hover:not(:disabled) {
+  transform: translateY(-1px);
+}
+
+button:disabled {
+  background: var(--outline);
+  color: var(--on-surface-variant);
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* Utility classes */
+.card {
+  background: var(--surface-color);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--elevation-1);
+  border: 1px solid var(--outline-variant);
+}
+
+.card-elevated {
+  box-shadow: var(--elevation-2);
+}
+
+.surface-container {
+  background: var(--surface-container);
+  border-radius: var(--radius-md);
+  padding: var(--space-4);
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .app-header {
+    padding: var(--space-4);
+  }
+  
+  .app-header h1 {
+    font-size: var(--font-size-2xl);
+  }
+  
+  .subtitle {
+    font-size: var(--font-size-sm);
+  }
+  
+  .app-main {
+    padding: var(--space-4);
+  }
+}

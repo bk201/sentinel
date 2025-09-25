@@ -1,0 +1,176 @@
+.disclaimer {
+  background: #0a0a0a;
+  border-top: 1px solid #333;
+}
+
+.disclaimer-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+
+.disclaimer-main {
+  text-align: center;
+  margin-bottom: 3rem;
+  padding-bottom: 2rem;
+  border-bottom: 1px solid #333;
+}
+
+.disclaimer-main h4 {
+  color: #E0E0E0;
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin: 0 0 1rem 0;
+}
+
+.disclaimer-main p {
+  color: #A0A0A0;
+  font-size: 1.1rem;
+  line-height: 1.6;
+  margin: 0;
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.disclaimer-details {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2rem;
+  margin-bottom: 3rem;
+}
+
+.disclaimer-section h5 {
+  color: #D0D0D0;
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin: 0 0 1rem 0;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.disclaimer-section h5::before {
+  content: "•";
+  color: #3b82f6;
+  font-weight: bold;
+  font-size: 1.2rem;
+}
+
+.disclaimer-section ul {
+  margin: 0;
+  padding-left: 1.5rem;
+  list-style-type: none;
+}
+
+.disclaimer-section li {
+  color: #909090;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  margin-bottom: 0.5rem;
+  position: relative;
+}
+
+.disclaimer-section li::before {
+  content: "→";
+  color: #606060;
+  position: absolute;
+  left: -1.5rem;
+}
+
+.disclaimer-footer {
+  text-align: center;
+  padding-top: 2rem;
+  border-top: 1px solid #333;
+}
+
+.disclaimer-footer p {
+  color: #909090;
+  font-size: 0.9rem;
+  margin: 0.5rem 0;
+  line-height: 1.5;
+}
+
+.disclaimer-version {
+  font-weight: 600;
+  color: #C0C0C0 !important;
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  .disclaimer {
+    background: #1f2937;
+    border-top-color: #374151;
+  }
+  
+  .disclaimer-main {
+    border-bottom-color: #374151;
+  }
+  
+  .disclaimer-main h4 {
+    color: #f9fafb;
+  }
+  
+  .disclaimer-main p {
+    color: #d1d5db;
+  }
+  
+  .disclaimer-section h5 {
+    color: #e5e7eb;
+  }
+  
+  .disclaimer-section li {
+    color: #9ca3af;
+  }
+  
+  .disclaimer-footer {
+    border-top-color: #374151;
+  }
+  
+  .disclaimer-footer p {
+    color: #9ca3af;
+  }
+  
+  .disclaimer-version {
+    color: #d1d5db !important;
+  }
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+  .disclaimer {
+    padding: 2rem 0 1.5rem 0;
+    margin-top: 2rem;
+  }
+  
+  .disclaimer-content {
+    padding: 0 1rem;
+  }
+  
+  .disclaimer-main {
+    margin-bottom: 2rem;
+    padding-bottom: 1.5rem;
+  }
+  
+  .disclaimer-main h4 {
+    font-size: 1.25rem;
+  }
+  
+  .disclaimer-main p {
+    font-size: 1rem;
+  }
+  
+  .disclaimer-details {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+  }
+  
+  .disclaimer-section h5 {
+    font-size: 1rem;
+  }
+  
+  .disclaimer-section li {
+    font-size: 0.9rem;
+  }
+}

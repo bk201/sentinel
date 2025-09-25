@@ -1,0 +1,177 @@
+/* Camera Layout - Simple 2x2 Grid matching mockup */
+.camera-layout {
+  flex: 1;
+  display: flex;
+  margin-bottom: 15px;
+  overflow: hidden;
+  justify-content: center;
+  align-items: center;
+  /* padding: 10px; */
+}
+
+/* Video Grid - 2x2 layout */
+.video-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-template-rows: repeat(2, 1fr);
+  gap: 5px;
+  width: 100%;
+  height: 100%;
+  max-width: 1300px;
+  max-height: 100%;
+  aspect-ratio: 16 / 9;
+}
+
+/* Individual Video Feed */
+.video-feed {
+  background-color: #000000;
+  border-radius: 6px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #999;
+  font-size: 12px;
+  overflow: hidden;
+}
+
+.video-feed video {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  background: #000;
+}
+
+/* Video Label (top-left overlay) */
+.video-label {
+  position: absolute;
+  top: 8px;
+  left: 10px;
+  background-color: rgba(0, 0, 0, 0.5);
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 14px;
+  color: #FFFFFF;
+  font-weight: 500;
+  z-index: 10;
+  backdrop-filter: blur(4px);
+}
+
+/* Video Time (bottom-right overlay) */
+.video-time {
+  position: absolute;
+  bottom: 8px;
+  right: 10px;
+  background-color: rgba(0, 0, 0, 0.5);
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  color: #FFFFFF;
+  font-weight: 500;
+  z-index: 10;
+  backdrop-filter: blur(4px);
+}
+
+/* Video placeholder for missing feeds */
+.video-placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #1a1a1a;
+  color: #666;
+  font-size: 14px;
+}
+
+/* ===== Focus-and-Strips Layout ===== */
+/* When a camera is focused, show maximized video on left + all 4 thumbnails on right strip */
+
+.video-grid.focus-mode {
+  display: grid;
+  grid-template-columns: 78% 1fr;
+  grid-template-rows: repeat(4, 1fr);
+  gap: 8px;
+}
+
+/* Maximized video (left side, spans all 4 rows) */
+.video-grid.focus-mode .video-feed.maximized {
+  grid-column: 1;
+  grid-row: 1 / 5;
+  cursor: pointer;
+  border: 3px solid #007aff;
+  box-shadow: 0 0 12px rgba(0, 122, 255, 0.6);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.video-grid.focus-mode .video-feed.maximized:hover {
+  border-color: #0051d5;
+  box-shadow: 0 0 16px rgba(0, 122, 255, 0.8);
+}
+
+/* Minimized thumbnails (right strip, all 4 cameras) */
+.video-grid.focus-mode .video-feed.minimized {
+  grid-column: 2;
+  cursor: pointer;
+  border: 2px solid rgba(255, 255, 255, 0.15);
+  /* transition: all 0.2s ease; */
+}
+
+/* Active thumbnail (the one that's currently maximized) */
+.video-grid.focus-mode .video-feed.minimized.active {
+  border: 3px solid #007aff;
+  box-shadow: 0 0 8px rgba(0, 122, 255, 0.5);
+}
+
+/* Hover effect for non-active minimized thumbnails */
+.video-grid.focus-mode .video-feed.minimized:not(.active):hover {
+  transform: scale(1.05);
+  border-color: rgba(255, 255, 255, 0.4);
+  z-index: 10;
+}
+
+/* Make video feeds clickable in grid mode too (for entering focus mode) */
+.video-grid:not(.focus-mode) .video-feed {
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.video-grid:not(.focus-mode) .video-feed:hover {
+  transform: scale(1.02);
+}
+
+/* Responsive design */
+@media (max-width: 900px) {
+  .video-grid {
+    grid-template-columns: 1fr;
+    grid-template-rows: repeat(4, 1fr);
+    gap: 8px;
+  }
+
+  .video-label,
+  .video-time {
+    font-size: 10px;
+    padding: 3px 6px;
+  }
+  
+  /* Disable focus mode on smaller screens - keep 1-column layout */
+  .video-grid.focus-mode {
+    grid-template-columns: 1fr;
+    grid-template-rows: repeat(4, 1fr);
+  }
+  
+  .video-grid.focus-mode .video-feed.maximized {
+    grid-column: 1;
+    grid-row: auto;
+  }
+  
+  .video-grid.focus-mode .video-feed.minimized {
+    grid-column: 1;
+  }
+}
+
+@media (max-width: 600px) {
+  .video-grid {
+    gap: 6px;
+  }
+}

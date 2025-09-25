@@ -1,0 +1,220 @@
+.drop-zone {
+  max-width: 600px;
+  margin: 2rem auto;
+  padding: 1rem;
+}
+
+/* Validation Error Banner */
+.validation-error-banner {
+  background: #1a1a1a;
+  border: 1px solid #444;
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  position: relative;
+}
+
+.validation-error-banner .error-icon {
+  font-size: 2rem;
+  flex-shrink: 0;
+}
+
+.validation-error-banner .error-content {
+  flex: 1;
+}
+
+.validation-error-banner .error-title {
+  color: #fbbf24;
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin: 0 0 0.5rem 0;
+}
+
+.validation-error-banner .error-message {
+  color: #e0e0e0;
+  font-size: 1rem;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.validation-error-banner .error-dismiss {
+  background: transparent;
+  border: none;
+  color: #888;
+  font-size: 1.5rem;
+  cursor: pointer;
+  padding: 0;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: color 0.2s ease;
+}
+
+.validation-error-banner .error-dismiss:hover {
+  color: #e0e0e0;
+}
+
+.drop-area {
+  border: 2px dashed #404040;
+  border-radius: 12px;
+  padding: 3rem 2rem;
+  text-align: center;
+  background: #1A1A1A;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  position: relative;
+}
+
+.drop-area:hover {
+  border-color: #3b82f6;
+  background: #242424;
+}
+
+.drop-area.active {
+  border-color: #10b981;
+  background: #1e3a2e;
+  transform: scale(1.02);
+}
+
+.drop-area.loading {
+  border-color: #f59e0b;
+  background: #2a2416;
+  cursor: not-allowed;
+}
+
+.drop-icon {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+  opacity: 0.7;
+}
+
+.drop-area h3 {
+  font-size: 1.5rem;
+  margin: 0 0 1rem 0;
+  color: #E0E0E0;
+}
+
+.drop-instruction {
+  color: #B0B0B0;
+  margin: 1rem 0 2rem 0;
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+.select-button {
+  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+  color: white;
+  border: none;
+  padding: 0.75rem 2rem;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.select-button:hover:not(:disabled) {
+  background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.select-button:disabled {
+  background: #9ca3af;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.loading-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid #2a2a2a;
+  border-top: 4px solid #3b82f6;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.error-message {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  margin-top: 1rem;
+  background: #3a1a1a;
+  border: 1px solid #5a2a2a;
+  border-radius: 6px;
+  color: #ff6b6b;
+  font-size: 0.9rem;
+}
+
+.error-icon {
+  font-size: 1rem;
+}
+
+.requirements {
+  margin-top: 2rem;
+  padding: 1.5rem;
+  background: #1A1A1A;
+  border: 1px solid #333;
+  border-radius: 8px;
+}
+
+.requirements h4 {
+  margin: 0 0 1rem 0;
+  color: #E0E0E0;
+  font-size: 1rem;
+}
+
+.requirements ul {
+  margin: 0;
+  padding-left: 1.5rem;
+  color: #B0B0B0;
+}
+
+.requirements li {
+  margin-bottom: 0.5rem;
+  line-height: 1.5;
+}
+
+@media (max-width: 768px) {
+  .drop-zone {
+    margin: 1rem;
+  }
+  
+  .drop-area {
+    padding: 2rem 1rem;
+  }
+  
+  .drop-area h3 {
+    font-size: 1.25rem;
+  }
+  
+  .drop-instruction {
+    font-size: 0.9rem;
+  }
+  
+  .select-button {
+    padding: 0.6rem 1.5rem;
+    font-size: 0.9rem;
+  }
+}

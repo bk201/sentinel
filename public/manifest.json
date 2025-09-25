@@ -1,0 +1,53 @@
+{
+  "name": "Sentinel",
+  "short_name": "Sentinel",
+  "description": "A privacy-first, client-side Tesla dashcam video viewer with multi-angle synchronization",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#000000",
+  "theme_color": "#00ff41",
+  "orientation": "landscape-primary",
+  "icons": [
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
+  "categories": ["utilities", "multimedia"],
+  "screenshots": [
+    {
+      "src": "/screenshot-desktop.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "form_factor": "wide"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Load Tesla Folder",
+      "short_name": "Load",
+      "description": "Load a Tesla dashcam folder",
+      "url": "/?action=load",
+      "icons": [
+        {
+          "src": "/icon-192.png",
+          "sizes": "192x192"
+        }
+      ]
+    }
+  ],
+  "file_handlers": [
+    {
+      "action": "/",
+      "accept": {
+        "video/mp4": [".mp4"]
+      }
+    }
+  ]
+}
