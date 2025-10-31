@@ -7,7 +7,7 @@ on:
     branches: [ main ]
 
 jobs:
-  test:
+  build-and-test:
     runs-on: ubuntu-latest
     
     strategy:
@@ -34,7 +34,8 @@ jobs:
       run: npm test
 
   deploy:
-    needs: test
+    needs: build-and-test
+    environment: github-pages
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/release'
     
@@ -50,3 +51,11 @@ jobs:
       run: npm run build:prod
       env:
         GITHUB_PAGES: 'true'
+
+    - name: Upload Production Build Artifact
+      uses: actions/upload-pages-artifact@v4
+      with:
+        name: ./dist
+    
+    - name: Deploy to GitHub Pages
+      uses: actions/deploy-pages@v4
