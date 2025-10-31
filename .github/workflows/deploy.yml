@@ -38,6 +38,9 @@ jobs:
     environment: github-pages
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/release'
+    permissions:
+      pages: write      # to deploy to Pages
+      id-token: write   # to verify the deployment originates from an appropriate source
     
     steps:
     - uses: actions/checkout@v4
@@ -46,6 +49,9 @@ jobs:
       uses: actions/setup-node@v6
       with:
         node-version: 22
+
+    - name: Install dependencies
+      run: npm install
     
     - name: Build for production
       run: npm run build:prod
@@ -55,7 +61,7 @@ jobs:
     - name: Upload Production Build Artifact
       uses: actions/upload-pages-artifact@v4
       with:
-        name: ./dist
+        path: ./dist
     
     - name: Deploy to GitHub Pages
       uses: actions/deploy-pages@v4
