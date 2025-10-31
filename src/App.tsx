@@ -9,6 +9,7 @@ import ClipSelector from './components/ClipSelector'
 import { TeslaCamService } from './services/TeslaCamService'
 import { TeslaCamFootageService } from './services/TeslaCamFootageService'
 import { DebugProvider } from './contexts/DebugContext'
+import { I18nProvider } from './i18n'
 import { analyzeClips, type DetectedClip } from './utils/clipDetectionUtils'
 import type { ProcessedVideoFile } from './types'
 import type { TeslaClipEvent } from './types/TeslaCamFootage'
@@ -195,10 +196,18 @@ function App() {
   )
 }
 
+function AppWithProviders() {
+  return (
+    <I18nProvider>
+      <App />
+    </I18nProvider>
+  )
+}
+
 // Enable why-did-you-render tracking for this component
 if (import.meta.env.DEV) {
   App.whyDidYouRender = true
   console.log('✅ App component marked for WDYR tracking')
 }
 
-export default App
+export default AppWithProviders

@@ -1,4 +1,5 @@
 import React from 'react'
+import { useI18n } from '../i18n'
 import './ErrorMessage.css'
 
 interface ErrorMessageProps {
@@ -11,18 +12,21 @@ interface ErrorMessageProps {
 }
 
 const ErrorMessage: React.FC<ErrorMessageProps> = ({ 
-  title = 'Validation Error',
+  title,
   message, 
   details,
   onRetry,
   onReset,
   className = ''
 }) => {
+  const { t } = useI18n()
+  const displayTitle = title || t.errors.validationError
+  
   return (
     <div className={`error-message-container ${className}`}>
       <div className="error-content">
         <div className="error-icon">⚠️</div>
-        <h3 className="error-title">{title}</h3>
+        <h3 className="error-title">{displayTitle}</h3>
         <p className="error-message">{message}</p>
         
         {details && details.length > 0 && (
@@ -42,7 +46,7 @@ const ErrorMessage: React.FC<ErrorMessageProps> = ({
               className="retry-button"
               onClick={onRetry}
             >
-              Try Again
+              {t.errors.tryAgain}
             </button>
           )}
           {onReset && (
@@ -50,7 +54,7 @@ const ErrorMessage: React.FC<ErrorMessageProps> = ({
               className="reset-button"
               onClick={onReset}
             >
-              Select Different Folder
+              {t.errors.selectDifferentFolder}
             </button>
           )}
         </div>

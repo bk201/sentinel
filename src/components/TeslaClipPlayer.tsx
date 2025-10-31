@@ -5,7 +5,8 @@ import type { TeslaClipEvent } from '../types/TeslaCamFootage'
 import { TeslaCamFootageService } from '../services/TeslaCamFootageService'
 import { UnifiedTimelineBuilder } from '../services/UnifiedTimelineBuilder'
 import { useDebugMode } from '../contexts/DebugContext'
-import { getCameraDisplayName, formatTime, formatAbsoluteTime } from '../utils/cameraUtils'
+import { useI18n } from '../i18n'
+import { formatTime, formatAbsoluteTime } from '../utils/cameraUtils'
 import ClipSidebar from './ClipSidebar'
 import './TeslaClipPlayer.css'
 import './CameraLayout.css'
@@ -19,6 +20,7 @@ interface TeslaClipPlayerProps {
 
 const TeslaClipPlayer: React.FC<TeslaClipPlayerProps> = ({ videoFiles, event, onReset }) => {
   const { trace, debugMode, setTraceMode } = useDebugMode()
+  const { t } = useI18n()
 
   // Core state
   const [timeline, setTimeline] = useState<UnifiedTimeline | null>(null)
@@ -62,6 +64,22 @@ const TeslaClipPlayer: React.FC<TeslaClipPlayerProps> = ({ videoFiles, event, on
     { value: 4, label: '4×' },
     { value: 8, label: '8×' }
   ]
+
+  // Helper function to get localized camera name
+  const getCameraName = (position: CameraPosition | string): string => {
+    switch (position) {
+      case 'front':
+        return t.player.front
+      case 'back':
+        return t.player.back
+      case 'left_repeater':
+        return t.player.left
+      case 'right_repeater':
+        return t.player.right
+      default:
+        return String(position).toUpperCase()
+    }
+  }
 
   // Initialize timeline
   useEffect(() => {
@@ -473,7 +491,7 @@ const TeslaClipPlayer: React.FC<TeslaClipPlayerProps> = ({ videoFiles, event, on
       <div className="video-player loading">
         <div className="loading-container">
           <div className="spinner"></div>
-          <p>Processing Tesla dashcam footages...</p>
+          <p>{t.player.processing}</p>
         </div>
       </div>
     )
@@ -486,7 +504,7 @@ const TeslaClipPlayer: React.FC<TeslaClipPlayerProps> = ({ videoFiles, event, on
         <div className="error-container">
           <div className="error-icon">❌</div>
           <p>No Tesla dashcam footages found</p>
-          <button onClick={onReset}>Try Again</button>
+          <button onClick={onReset}>{t.errors.tryAgain}</button>
         </div>
       </div>
     )
@@ -523,7 +541,7 @@ const TeslaClipPlayer: React.FC<TeslaClipPlayerProps> = ({ videoFiles, event, on
               style={{ "order": getCameraOrder(focusedCamera) }}
               onClick={() => setFocusedCamera(null)}
             >
-              <div className="video-label">{getCameraDisplayName(focusedCamera)}</div>
+              <div className="video-label">{getCameraName(focusedCamera)}</div>
               <div className="video-placeholder"></div>
             </div>
             )}
@@ -550,7 +568,7 @@ const TeslaClipPlayer: React.FC<TeslaClipPlayerProps> = ({ videoFiles, event, on
                   onClick={() => handleCameraClick(cameraPosition)}
                 >
                   <div className="video-label">
-                    {getCameraDisplayName(cameraPosition)}
+                    {getCameraName(cameraPosition)}
                   </div>
                   
                   <video
@@ -677,17 +695,17 @@ const TeslaClipPlayer: React.FC<TeslaClipPlayerProps> = ({ videoFiles, event, on
                 <>
                   <button 
                     className="jump-to-event-btn"
-                    title="Jump to Event" 
+                    title={t.player.jumpToEvent}
                     onClick={handleJumpToEvent}
                   >
-                    ⚠️ Event
+                    ⚠️ {t.player.eventButtonText}
                   </button>
                   <span style={{ margin: '0 10px', color: '#444' }}>|</span>
                 </>
               )}
               
               <button 
-                title="Rewind 5s" 
+                title={t.player.rewind}
                 onClick={() => handleRewind(5)}
               >
                 ↺ 5s
@@ -696,13 +714,13 @@ const TeslaClipPlayer: React.FC<TeslaClipPlayerProps> = ({ videoFiles, event, on
               <button 
                 className="play-pause-btn"
                 onClick={handlePlayPause}
-                title={isAtEndOfClip ? "Replay from start" : ((isPlaying || (isSeeking && wasPlayingBeforeSeek.current)) ? "Pause" : "Play")}
+                title={isAtEndOfClip ? t.player.replay : ((isPlaying || (isSeeking && wasPlayingBeforeSeek.current)) ? t.player.pause : t.player.play)}
               >
                 {isAtEndOfClip ? '↻' : ((isPlaying || (isSeeking && wasPlayingBeforeSeek.current)) ? '⏸' : '▶')}
               </button>
               
               <button 
-                title="Forward 5s" 
+                title={t.player.forward}
                 onClick={() => handleForward(5)} 
               >
                 ↻ 5s
@@ -729,7 +747,7 @@ const TeslaClipPlayer: React.FC<TeslaClipPlayerProps> = ({ videoFiles, event, on
                 <button 
                   className="debug-jump-btn"
                   onClick={handleJumpToFootageEnd}
-                  title="Jump to 3s before footage end (Debug)"
+                  title={t.player.debugJumpToEnd}
                 >
                   🐛 Jump to Footage End -3s
                 </button>
@@ -738,9 +756,9 @@ const TeslaClipPlayer: React.FC<TeslaClipPlayerProps> = ({ videoFiles, event, on
               <button 
                 className="close-clip-btn"
                 onClick={onReset}
-                title="Close Clip"
+                title={t.player.closeClip}
               >
-                ✕ Close Clip
+                ✕ {t.player.closeClip}
               </button>
             </div>
           </div>

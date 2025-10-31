@@ -17,6 +17,7 @@ I created this project for fun to experience the benefits and drawbacks of “vi
 + 🎥 **Multi-camera synchronized playback** - View front, back, left, and right cameras simultaneously
 + 🔒 **Privacy-first design** - All processing happens locally in your browser
 + 📍 **Event information** - Display sentry mode clip event information. Navigate to the event.
++ 🌐 **Multi-language support** - Available in serveral languages.
 + 🌐 **Cross-browser support** - Chrome, Firefox, Safari, and Edge
 
 ## 🚀 Quick Start

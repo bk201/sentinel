@@ -1,4 +1,5 @@
 import React, { useState, useCallback, useRef, useEffect } from 'react'
+import { useI18n } from '../i18n'
 import './DropZone.css'
 
 interface DropZoneProps {
@@ -16,6 +17,7 @@ const DropZone: React.FC<DropZoneProps> = ({
   onClearError,
   className = '' 
 }) => {
+  const { t } = useI18n()
   const [dragActive, setDragActive] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
@@ -59,9 +61,9 @@ const DropZone: React.FC<DropZoneProps> = ({
       if (err instanceof Error && err.name === 'AbortError') {
         return // User cancelled
       }
-      setError(err instanceof Error ? err.message : 'Failed to select folder')
+      setError(err instanceof Error ? err.message : t.dropZone.failedToSelect)
     }
-  }, [supportsFSAPI, onDirectorySelected])
+  }, [supportsFSAPI, onDirectorySelected, t.dropZone.failedToSelect])
 
   const handleFileInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files
@@ -98,17 +100,17 @@ const DropZone: React.FC<DropZoneProps> = ({
       )
 
       if (!directoryItem) {
-        setError('Please drop a Tesla dashcam folder')
+        setError(t.dropZone.dropFolderOnly)
         return
       }
 
       // Note: Drag & drop with directories requires the File System Access API
       // This is a simplified implementation - full compatibility would require more work
-      setError('Drag & drop folder support is limited. Please use the "Select Folder" button.')
+      setError(t.dropZone.dragDropLimited)
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to process dropped folder')
+      setError(err instanceof Error ? err.message : t.dropZone.failedToProcess)
     }
-  }, [])
+  }, [t.dropZone.dropFolderOnly, t.dropZone.dragDropLimited, t.dropZone.failedToProcess])
 
   return (
     <div className={`drop-zone ${className}`}>
@@ -116,7 +118,7 @@ const DropZone: React.FC<DropZoneProps> = ({
         <div className="validation-error-banner">
           <div className="error-icon">⚠️</div>
           <div className="error-content">
-            <h3 className="error-title">Validation Error</h3>
+            <h3 className="error-title">{t.dropZone.validationError}</h3>
             <p className="error-message">{validationError}</p>
           </div>
           {onClearError && (
@@ -151,16 +153,16 @@ const DropZone: React.FC<DropZoneProps> = ({
         {isLoading ? (
           <div className="loading-state">
             <div className="spinner" />
-            <p>Processing folder...</p>
+            <p>{t.dropZone.processingFolder}</p>
           </div>
         ) : (
           <>
             <div className="drop-icon">📁</div>
-            <h3>Select Tesla Dashcam Folder</h3>
+            <h3>{t.dropZone.title}</h3>
             <p className="drop-instruction">
               {supportsFSAPI 
-                ? 'Drop your Tesla dashcam folder here or click to browse'
-                : 'Click to browse and select a Tesla dashcam folder'
+                ? t.dropZone.dragAndDrop
+                : t.dropZone.clickToSelect
               }
             </p>
             <button 
@@ -171,7 +173,7 @@ const DropZone: React.FC<DropZoneProps> = ({
               }}
               disabled={isLoading}
             >
-              Select Folder
+              {t.dropZone.selectButton}
             </button>
 
             {/* Hidden file input for browsers without File System Access API */}
@@ -195,11 +197,11 @@ const DropZone: React.FC<DropZoneProps> = ({
       </div>
       
       <div className="requirements">
-        <h4>Requirements:</h4>
+        <h4>{t.requirements.title}</h4>
         <ul>
-          <li>Tesla dashcam folder with timestamp format (YYYY-MM-DD_HH-MM-SS)</li>
-          <li>For example, the "2025-10-20_19-52-58" folder in the "SentryClips" folder</li>
-          <li>Works in all modern browsers (Chrome, Firefox, Safari, Edge)</li>
+          <li>{t.requirements.folderFormat}</li>
+          <li>{t.requirements.example}</li>
+          <li>{t.requirements.browserSupport}</li>
         </ul>
       </div>
     </div>

@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import type { DetectedClip } from '../utils/clipDetectionUtils'
 import { formatTime } from '../utils/cameraUtils'
+import { useI18n } from '../i18n'
 import './ClipSelector.css'
 
 interface ClipSelectorProps {
@@ -10,6 +11,7 @@ interface ClipSelectorProps {
 }
 
 const ClipSelector: React.FC<ClipSelectorProps> = ({ clips, onSelectClip, onCancel }) => {
+  const { t, interpolate } = useI18n()
   const [selectedClipId, setSelectedClipId] = useState<string>(clips[clips.length - 1]?.id || '')
   const selectedCardRef = useRef<HTMLDivElement>(null)
 
@@ -56,8 +58,8 @@ const ClipSelector: React.FC<ClipSelectorProps> = ({ clips, onSelectClip, onCanc
     <div className="clip-selector-overlay" onClick={onCancel}>
       <div className="clip-selector-modal" onClick={(e) => e.stopPropagation()}>
         <div className="clip-selector-header">
-          <h2>Multiple Clips Detected</h2>
-          <p>Found {clips.length} recording sessions in this folder. Select one to view:</p>
+          <h2>{t.clipSelector.title}</h2>
+          <p>{interpolate(t.clipSelector.foundClips, { count: clips.length })}</p>
         </div>
 
         <div className="clip-selector-list">
@@ -74,8 +76,8 @@ const ClipSelector: React.FC<ClipSelectorProps> = ({ clips, onSelectClip, onCanc
               >
                 <div className="clip-card-header">
                   <div className="clip-title">
-                    Clip {index + 1}
-                    {isLatest && <span className="latest-badge">Latest</span>}
+                    {t.clipSelector.clip} {index + 1}
+                    {isLatest && <span className="latest-badge">{t.clipSelector.latest}</span>}
                   </div>
                 </div>
                 
@@ -94,10 +96,10 @@ const ClipSelector: React.FC<ClipSelectorProps> = ({ clips, onSelectClip, onCanc
 
         <div className="clip-selector-actions">
           <button className="btn-cancel" onClick={onCancel}>
-            Cancel
+            {t.common.cancel}
           </button>
           <button className="btn-confirm" onClick={handleConfirm} disabled={!selectedClipId}>
-            Load Selected Clip
+            {t.clipSelector.confirmButton}
           </button>
         </div>
       </div>

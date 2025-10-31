@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react'
 import type { TeslaCamFootage, TeslaClipEvent } from '../types/TeslaCamFootage'
-import { getCameraDisplayName } from '../utils/cameraUtils'
+import { useI18n } from '../i18n'
 import './ClipSidebar.css'
 
 interface ClipSidebarProps {
@@ -28,9 +28,26 @@ const ClipSidebar: React.FC<ClipSidebarProps> = ({
   onJumpToEvent,
   clipStartTime
 }) => {
+  const { t } = useI18n()
   const [isVideoFilesExpanded, setIsVideoFilesExpanded] = useState(false)
   
   const allCameraPositions = useMemo(() => ['front', 'back', 'left_repeater', 'right_repeater'] as const, [])
+  
+  // Helper function to get localized camera name
+  const getCameraName = (position: string): string => {
+    switch (position) {
+      case 'front':
+        return t.player.front
+      case 'back':
+        return t.player.back
+      case 'left_repeater':
+        return t.player.left
+      case 'right_repeater':
+        return t.player.right
+      default:
+        return String(position).toUpperCase()
+    }
+  }
   
   const cameraStatusText = useMemo(() => {
     if (currentFootage?.isComplete) {
@@ -39,11 +56,11 @@ const ClipSidebar: React.FC<ClipSidebarProps> = ({
 
     const missingFeeds = allCameraPositions.filter(pos => 
       !currentFootage?.availableCameras.includes(pos)
-    ).map(getCameraDisplayName).join(', ')
+    ).map(getCameraName).join(', ')
 
-    return 'Missing camera feeds: ' + missingFeeds
+    return t.sidebar.missingCameras + ': ' + missingFeeds
 
-  }, [currentFootage, allCameraPositions])
+  }, [currentFootage, allCameraPositions, t.player, t.sidebar])
 
   const clipEndTime = useMemo(() => {
     if (!clipStartTime) return null
@@ -63,11 +80,11 @@ const ClipSidebar: React.FC<ClipSidebarProps> = ({
   return (
     <div className={`sidebar ${!isOpen ? 'closed' : ''}`}>
       <div className="sidebar-header">
-        <h3>CLIP DETAILS</h3>
+        <h3>{t.sidebar.clipDetails}</h3>
         <button 
           className="toggle-btn" 
           onClick={onToggle}
-          title={isOpen ? "Close Details" : "Show Details"}
+          title={isOpen ? t.sidebar.closeDetails : t.sidebar.showDetails}
         >
           ⓘ
         </button>
@@ -80,34 +97,34 @@ const ClipSidebar: React.FC<ClipSidebarProps> = ({
             {/* Clip Information */}
             {clipStartTime && (
               <div className="clip-info-section">
-                <div className="section-title">Clip Information</div>
+                <div className="section-title">{t.sidebar.clipInformation}</div>
                 <div className="detail-row">
-                  <strong>Clip Start:</strong> {clipStartTimeFormatted}
+                  <strong>{t.sidebar.clipStart}:</strong> {clipStartTimeFormatted}
                 </div>
                 <div className="detail-row">
-                  <strong>Clip End:</strong> {clipEndTimeFormatted}
+                  <strong>{t.sidebar.clipEnd}:</strong> {clipEndTimeFormatted}
                 </div>
                 <div className="detail-row">
-                  <strong>Total Duration:</strong> {formatTime(totalDuration)}
+                  <strong>{t.sidebar.totalDuration}:</strong> {formatTime(totalDuration)}
                 </div>
               </div>
             )}
 
             {/* Footage Information */}
             <div className="footage-info-section">
-              <div className="section-title">Current Footage</div>
+              <div className="section-title">{t.sidebar.currentFootage}</div>
               <div className="detail-row">
-                <strong>Footage:</strong> {currentFootageIndex + 1} of {totalFootages}
+                <strong>{t.sidebar.footage}:</strong> {currentFootageIndex + 1} of {totalFootages}
               </div>
               <div className="detail-row">
-                <strong>Date & Time:</strong> {currentFootage?.timestamp.replace('_', ' ')}
+                <strong>{t.sidebar.dateTime}:</strong> {currentFootage?.timestamp.replace('_', ' ')}
               </div>
               <div className="detail-row">
-                <strong>Duration:</strong> {formatTime(currentFootage?.duration || 0)}
+                <strong>{t.sidebar.duration}:</strong> {formatTime(currentFootage?.duration || 0)}
               </div>
               {currentFootage && !currentFootage.isComplete && (
                 <div className="detail-row warning">
-                  <strong>⚠️ Warning:</strong> {cameraStatusText}
+                  <strong>⚠️ {t.sidebar.warning}:</strong> {cameraStatusText}
                 </div>
               )}
 
@@ -120,14 +137,14 @@ const ClipSidebar: React.FC<ClipSidebarProps> = ({
                     title="Click to expand/collapse video files"
                   >
                     <span className="toggle-label">
-                      {isVideoFilesExpanded ? '▼' : '▶'} Video Files ({currentFootage.videoFiles.size})
+                      {isVideoFilesExpanded ? '▼' : '▶'} {t.sidebar.videoFiles} ({currentFootage.videoFiles.size})
                     </span>
                   </div>
                   {isVideoFilesExpanded && (
                     <div className="video-files-list">
                       {Array.from(currentFootage.videoFiles.entries()).map(([camera, videoFile]) => (
                         <div key={camera} className="file-row">
-                          <div className="camera-badge">{getCameraDisplayName(camera)}</div>
+                          <div className="camera-badge">{getCameraName(camera)}</div>
                           <div className="file-info">
                             <div className="file-name" title={videoFile.originalFile.name}>
                               {videoFile.originalFile.name}
@@ -147,12 +164,12 @@ const ClipSidebar: React.FC<ClipSidebarProps> = ({
             {/* Event Information Section */}
             {event && (
               <div className="event-section">
-                <div className="section-title">Event Information</div>
+                <div className="section-title">{t.event.title}</div>
                 <div className="detail-row">
-                  <strong>Time:</strong> {new Date(event.timestamp).toLocaleString()}
+                  <strong>{t.event.timestamp}:</strong> {new Date(event.timestamp).toLocaleString()}
                 </div>
                 <div className="detail-row">
-                  <strong>Reason:</strong>{' '}
+                  <strong>{t.event.reason}:</strong>{' '}
                   <span 
                     className="event-reason-link"
                     onClick={onJumpToEvent}
@@ -163,7 +180,7 @@ const ClipSidebar: React.FC<ClipSidebarProps> = ({
                 </div>
                 {event.city && (
                   <div className="detail-row">
-                    <strong>City:</strong> {event.city}
+                    <strong>{t.event.city}:</strong> {event.city}
                   </div>
                 )}
                 
@@ -171,7 +188,7 @@ const ClipSidebar: React.FC<ClipSidebarProps> = ({
                 {event.est_lat && event.est_lon && (
                   <>
                     <div className="detail-row">
-                      <strong>Location:</strong>
+                      <strong>{t.event.location}:</strong>
                     </div>
                     <div className="map-container">
                       <iframe
@@ -189,7 +206,7 @@ const ClipSidebar: React.FC<ClipSidebarProps> = ({
                           rel="noopener noreferrer"
                           className="map-link"
                         >
-                          View on OpenStreetMap →
+                          {t.event.viewOnOpenStreetMap} →
                         </a>
                         <a
                           href={`https://www.google.com/maps?q=${event.est_lat},${event.est_lon}`}
@@ -197,7 +214,7 @@ const ClipSidebar: React.FC<ClipSidebarProps> = ({
                           rel="noopener noreferrer"
                           className="map-link"
                         >
-                          View on Google Maps →
+                          {t.event.viewOnGoogleMaps} →
                         </a>
                       </div>
                     </div>

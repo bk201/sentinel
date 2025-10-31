@@ -1,4 +1,5 @@
 import React from 'react'
+import { useI18n } from '../i18n'
 import './ValidationSpinner.css'
 
 interface ValidationSpinnerProps {
@@ -8,10 +9,13 @@ interface ValidationSpinnerProps {
 }
 
 const ValidationSpinner: React.FC<ValidationSpinnerProps> = ({ 
-  message = 'Validating folder...', 
+  message, 
   progress,
   className = '' 
 }) => {
+  const { t } = useI18n()
+  const displayMessage = message || t.validation.validating
+  
   return (
     <div className={`validation-spinner ${className}`}>
       <div className="spinner-container">
@@ -20,7 +24,7 @@ const ValidationSpinner: React.FC<ValidationSpinnerProps> = ({
       </div>
       
       <div className="spinner-content">
-        <h3 className="spinner-message">{message}</h3>
+        <h3 className="spinner-message">{displayMessage}</h3>
         
         {progress !== undefined && (
           <div className="progress-container">
@@ -35,7 +39,7 @@ const ValidationSpinner: React.FC<ValidationSpinnerProps> = ({
         )}
         
         <p className="spinner-description">
-          Analyzing Tesla dashcam folder structure and validating video files...
+          {t.validation.analyzing}
         </p>
       </div>
     </div>
