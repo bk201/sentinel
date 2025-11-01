@@ -42,6 +42,7 @@ export interface Translations {
     folderFormat: string
     example: string
     browserSupport: string
+    demoVideoDescription: string
   }
   
   // Clip Selector
@@ -171,7 +172,8 @@ export const translations: Record<Language, Translations> = {
       title: 'Requirements:',
       folderFormat: 'Tesla dashcam folder with timestamp format (YYYY-MM-DD_HH-MM-SS)',
       example: 'For example, the "2025-10-20_19-52-58" folder in the "SentryClips" folder',
-      browserSupport: 'Works in all modern browsers (Chrome, Firefox, Safari, Edge)'
+      browserSupport: 'Works in all modern browsers (Chrome, Firefox, Safari, Edge)',
+      demoVideoDescription: 'Watch how to select and view your Tesla dashcam clips'
     },
     clipSelector: {
       title: 'Multiple Clips Detected',
@@ -285,7 +287,8 @@ export const translations: Record<Language, Translations> = {
       title: '系統要求：',
       folderFormat: 'Tesla 行車記錄資料夾，時間戳記格式為 (YYYY-MM-DD_HH-MM-SS)',
       example: '例如，「SentryClips」資料夾中的「2025-10-20_19-52-58」資料夾',
-      browserSupport: '支援所有現代瀏覽器（Chrome、Firefox、Safari、Edge）'
+      browserSupport: '支援所有現代瀏覽器（Chrome、Firefox、Safari、Edge）',
+      demoVideoDescription: '觀看如何選擇和檢視您的 Tesla 行車記錄影片'
     },
     clipSelector: {
       title: '偵測到多個片段',
@@ -399,7 +402,8 @@ export const translations: Record<Language, Translations> = {
       title: '系统要求：',
       folderFormat: 'Tesla 行车记录文件夹，时间戳格式为 (YYYY-MM-DD_HH-MM-SS)',
       example: '例如，"SentryClips"文件夹中的"2025-10-20_19-52-58"文件夹',
-      browserSupport: '支持所有现代浏览器（Chrome、Firefox、Safari、Edge）'
+      browserSupport: '支持所有现代浏览器（Chrome、Firefox、Safari、Edge）',
+      demoVideoDescription: '观看如何选择和查看您的 Tesla 行车记录视频'
     },
     clipSelector: {
       title: '检测到多个片段',
@@ -513,7 +517,8 @@ export const translations: Record<Language, Translations> = {
       title: '要件：',
       folderFormat: 'タイムスタンプ形式（YYYY-MM-DD_HH-MM-SS）の Tesla ドライブレコーダーフォルダ',
       example: '例：「SentryClips」フォルダ内の「2025-10-20_19-52-58」フォルダ',
-      browserSupport: 'すべてのモダンブラウザ（Chrome、Firefox、Safari、Edge）に対応'
+      browserSupport: 'すべてのモダンブラウザ（Chrome、Firefox、Safari、Edge）に対応',
+      demoVideoDescription: 'Tesla ドライブレコーダー映像の選択と表示方法をご覧ください'
     },
     clipSelector: {
       title: '複数のクリップを検出',

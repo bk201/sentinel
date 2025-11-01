@@ -203,6 +203,22 @@ const DropZone: React.FC<DropZoneProps> = ({
           <li>{t.requirements.example}</li>
           <li>{t.requirements.browserSupport}</li>
         </ul>
+
+        <div className="demo-video">
+          <div className="video-container">
+            <iframe
+              width="560"
+              height="315"
+              src="https://www.youtube.com/embed/JkWgvckqVkU"
+              title="Sentinel Demo - How to use the Tesla Dashcam Viewer"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+            />
+          </div>
+          <p className="video-description">
+            {t.requirements.demoVideoDescription}
+          </p>
+        </div>
       </div>
     </div>
   )
