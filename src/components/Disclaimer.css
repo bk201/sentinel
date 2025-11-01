@@ -94,6 +94,38 @@
 .disclaimer-version {
   font-weight: 600;
   color: #C0C0C0 !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.25rem;
+  flex-wrap: wrap;
+}
+
+.disclaimer-version .revision-link {
+  color: #3b82f6;
+  text-decoration: none;
+  font-family: 'Courier New', monospace;
+  padding: 0.15rem 0.35rem;
+  background: rgba(59, 130, 246, 0.1);
+  border-radius: 3px;
+  transition: all 0.2s ease;
+  display: inline-block;
+  line-height: 1.2;
+}
+
+.disclaimer-version .revision-link:hover {
+  background: rgba(59, 130, 246, 0.2);
+  text-decoration: underline;
+}
+
+.disclaimer-version .revision-text {
+  color: #909090;
+  font-family: 'Courier New', monospace;
+  padding: 0.15rem 0.35rem;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 3px;
+  display: inline-block;
+  line-height: 1.2;
 }
 
 /* Dark mode support */

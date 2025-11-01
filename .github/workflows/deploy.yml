@@ -29,6 +29,7 @@ jobs:
       run: npm run build
       env:
         GITHUB_PAGES: 'true'
+        VITE_APP_REVISION: ${{ github.sha }}
 
     - name: Run tests
       run: npm test
@@ -57,6 +58,7 @@ jobs:
       run: npm run build:prod
       env:
         GITHUB_PAGES: 'true'
+        VITE_APP_REVISION: ${{ github.sha }}
 
     - name: Upload Production Build Artifact
       uses: actions/upload-pages-artifact@v4

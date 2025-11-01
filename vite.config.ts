@@ -26,6 +26,11 @@ export default defineConfig({
     target: 'esnext',
   },
 
+  // Define environment variables
+  define: {
+    __APP_REVISION__: JSON.stringify(process.env.VITE_APP_REVISION || 'dev'),
+  },
+
   resolve: {
     alias: {
       '@': '/src',
