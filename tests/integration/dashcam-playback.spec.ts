@@ -13,8 +13,8 @@ test.describe('Load and Play Tesla Dashcam Footage', () => {
     // Assert: Drop zone is visible on page load and contains expected instructions
     await expect(page.locator('.drop-zone')).toBeVisible()
     // The drop area heading and instructions may vary by browser feature detection; assert on stable phrases
-    await expect(page.locator('.drop-area h3')).toContainText('Select Tesla Dashcam Directory')
-    await expect(page.locator('.drop-instruction')).toContainText(/dashcam directory/i)
+    await expect(page.locator('.drop-area h3')).toContainText('Select Tesla Dashcam Folder')
+    await expect(page.locator('.drop-instruction')).toContainText(/dashcam folder/i)
     await expect(page.locator('.select-button')).toBeVisible()
   })
 
