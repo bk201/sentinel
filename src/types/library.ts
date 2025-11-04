@@ -12,7 +12,6 @@ export interface ClipEntry {
   folderName?: string // for saved/sentry (e.g., "2025-10-27_08-42-37")
   folderHandle?: FileSystemDirectoryHandle // for saved/sentry folders
   files: File[] // all video files for this clip
-  cameras: ('front' | 'back' | 'left_repeater' | 'right_repeater')[] // available cameras
   hasEvent: boolean // if event.json exists
   thumbnailUrl?: string // data URL from thumb.png if exists
   thumbnailBlob?: Blob // the actual thumb.png blob

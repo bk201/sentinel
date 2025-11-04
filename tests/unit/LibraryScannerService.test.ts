@@ -116,60 +116,6 @@ describe('LibraryScannerService', () => {
     })
   })
 
-  describe('detectCameras', () => {
-    it('should detect all four cameras', () => {
-      const files = [
-        new File([], '2025-10-27_14-30-25-front.mp4'),
-        new File([], '2025-10-27_14-30-25-back.mp4'),
-        new File([], '2025-10-27_14-30-25-left_repeater.mp4'),
-        new File([], '2025-10-27_14-30-25-right_repeater.mp4')
-      ]
-
-      const cameras = service.getCameras(files)
-
-      expect(cameras).toHaveLength(4)
-      expect(cameras).toContain('front')
-      expect(cameras).toContain('back')
-      expect(cameras).toContain('left_repeater')
-      expect(cameras).toContain('right_repeater')
-    })
-
-    it('should detect only front camera', () => {
-      const files = [
-        new File([], '2025-10-27_14-30-25-front.mp4')
-      ]
-
-      const cameras = service.getCameras(files)
-
-      expect(cameras).toEqual(['front'])
-    })
-
-    it('should handle no video files', () => {
-      const files = [
-        new File([], 'thumb.png'),
-        new File([], 'event.json')
-      ]
-
-      const cameras = service.getCameras(files)
-
-      expect(cameras).toHaveLength(0)
-    })
-
-    it('should not duplicate cameras', () => {
-      const files = [
-        new File([], '2025-10-27_14-30-25-front.mp4'),
-        new File([], '2025-10-27_14-31-25-front.mp4'), // Same camera, different timestamp
-        new File([], '2025-10-27_14-30-25-back.mp4')
-      ]
-
-      const cameras = service.getCameras(files)
-
-      expect(cameras).toHaveLength(2)
-      expect(cameras).toContain('front')
-      expect(cameras).toContain('back')
-    })
-  })
-
   describe('getUniqueTimestamps', () => {
     it('should count unique timestamps', () => {
       const files = [
@@ -227,8 +173,6 @@ describe('LibraryScannerService', () => {
       expect(entry.timestamp).toEqual(new Date('2025-10-27T14:30:25'))
       expect(entry.duration).toBe(60) // 1 unique timestamp * 60
       expect(entry.files).toEqual(files)
-      expect(entry.cameras).toContain('front')
-      expect(entry.cameras).toContain('back')
       expect(entry.hasEvent).toBe(false)
       expect(entry.folderName).toBeUndefined()
       expect(entry.folderHandle).toBeUndefined()
@@ -342,8 +286,6 @@ describe('LibraryScannerService', () => {
       expect(entry).not.toBeNull()
       expect(entry?.category).toBe('saved')
       expect(entry?.folderName).toBe('2025-10-27_14-30-25')
-      expect(entry?.cameras).toContain('front')
-      expect(entry?.cameras).toContain('back')
     })
 
     it('should return null for folder without video files', async () => {

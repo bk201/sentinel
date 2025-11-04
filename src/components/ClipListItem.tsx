@@ -64,9 +64,6 @@ export default function ClipListItem({ clip, isActive, onClick }: ClipListItemPr
               📋
             </span>
           )}
-          <span className="clip-cameras" title={`${clip.cameras.length} cameras`}>
-            📹 {clip.cameras.length}
-          </span>
         </div>
       </div>
 

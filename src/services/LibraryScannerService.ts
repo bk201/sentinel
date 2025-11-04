@@ -107,7 +107,6 @@ export class LibraryScannerService {
             timestamp: clip.startTime,
             duration: uniqueTimestamps * 60,
             files: clip.files, // Keep all files for event.json, thumb.png
-            cameras: this.getCameras(videoFiles),
             hasEvent: clip.files.some(f => f.name.toLowerCase() === 'event.json'),
             ...thumbnail,
           })
@@ -130,7 +129,6 @@ export class LibraryScannerService {
             timestamp,
             duration: this.countUniqueTimestamps(videoFiles) * 60,
             files: folderFiles,
-            cameras: this.getCameras(videoFiles),
             hasEvent: folderFiles.some(f => f.name.toLowerCase() === 'event.json'),
             folderName,
             ...thumbnail,
@@ -154,7 +152,6 @@ export class LibraryScannerService {
             timestamp,
             duration: this.countUniqueTimestamps(videoFiles) * 60,
             files: folderFiles,
-            cameras: this.getCameras(videoFiles),
             hasEvent: folderFiles.some(f => f.name.toLowerCase() === 'event.json'),
             folderName,
             ...thumbnail,
@@ -311,9 +308,6 @@ export class LibraryScannerService {
     // Extract video files
     const videoFiles = files.filter(f => f.name.endsWith('.mp4'))
     
-    // Detect available cameras
-    const cameras = this.detectCameras(videoFiles)
-    
     // Check for event.json
     const hasEvent = files.some(f => f.name.toLowerCase() === 'event.json')
     
@@ -333,7 +327,6 @@ export class LibraryScannerService {
       timestamp,
       duration,
       files,
-      cameras,
       hasEvent,
     }
 
@@ -409,27 +402,6 @@ export class LibraryScannerService {
   }
 
   /**
-   * Detect available cameras from video files
-   */
-  private detectCameras(videoFiles: File[]): ('front' | 'back' | 'left_repeater' | 'right_repeater')[] {
-    const cameras = new Set<'front' | 'back' | 'left_repeater' | 'right_repeater'>()
-    
-    for (const file of videoFiles) {
-      if (file.name.includes('-front.mp4')) {
-        cameras.add('front')
-      } else if (file.name.includes('-back.mp4')) {
-        cameras.add('back')
-      } else if (file.name.includes('-left_repeater.mp4')) {
-        cameras.add('left_repeater')
-      } else if (file.name.includes('-right_repeater.mp4')) {
-        cameras.add('right_repeater')
-      }
-    }
-    
-    return Array.from(cameras)
-  }
-
-  /**
    * Get unique timestamps from video files
    */
   private getUniqueTimestamps(videoFiles: File[]): number {
@@ -477,13 +449,6 @@ export class LibraryScannerService {
    */
   async getThumbnail(files: File[]): Promise<{ thumbnailUrl?: string; thumbnailBlob?: Blob }> {
     return this.loadThumbnail(files)
-  }
-
-  /**
-   * Public API: Detect available camera positions from video files
-   */
-  getCameras(videoFiles: File[]): ('front' | 'back' | 'left_repeater' | 'right_repeater')[] {
-    return this.detectCameras(videoFiles)
   }
 
   /**
