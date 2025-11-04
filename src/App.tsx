@@ -141,7 +141,23 @@ function App() {
         if (hasLibraryStructure) {
           console.log('Library structure detected in file paths, entering library mode...')
           // Enter library mode using file path analysis
-          await handleFileArrayLibraryMode(directoryData)
+          const scannedLibrary = await libraryScannerService.scanLibraryFromFiles(directoryData)
+          setLibrary(scannedLibrary)
+          setLibraryMode(true)
+          
+          // Set initial active category
+          const { recent: recentClips, saved: savedClips } = scannedLibrary.categories
+          const firstCategory: ClipCategory = 
+            recentClips.length > 0 ? 'recent' :
+            savedClips.length > 0 ? 'saved' : 'sentry'
+          setActiveCategory(firstCategory)
+          
+          // Auto-select first clip
+          const firstClip = scannedLibrary.categories[firstCategory][0]
+          if (firstClip) {
+            await handleLibraryClipSelect(firstClip)
+          }
+          
           setIsLoading(false)
           return
         }
@@ -297,173 +313,6 @@ function App() {
         setEvent(undefined)
         setActiveClip(null)
       }
-    }
-  }
-
-  const handleFileArrayLibraryMode = async (files: File[]) => {
-    try {
-      console.log('Processing file array for library mode...')
-      
-      // Group files by category based on paths
-      const categorizedFiles: {
-        recent: Map<string, File[]>
-        saved: Map<string, File[]>
-        sentry: Map<string, File[]>
-      } = {
-        recent: new Map(),
-        saved: new Map(),
-        sentry: new Map(),
-      }
-      
-      // Organize files by category and folder
-      for (const file of files) {
-        const path = file.webkitRelativePath || file.name
-        
-        if (path.includes('RecentClips/')) {
-          // RecentClips files are directly in the folder
-          const key = 'recent-all'
-          if (!categorizedFiles.recent.has(key)) {
-            categorizedFiles.recent.set(key, [])
-          }
-          categorizedFiles.recent.get(key)!.push(file)
-        } else if (path.includes('SavedClips/')) {
-          // Extract folder name from path like "TeslaCam/SavedClips/2025-10-27_14-30-25/..."
-          const match = path.match(/SavedClips\/([^/]+)/)
-          const folderName = match?.[1]
-          if (folderName) {
-            if (!categorizedFiles.saved.has(folderName)) {
-              categorizedFiles.saved.set(folderName, [])
-            }
-            categorizedFiles.saved.get(folderName)!.push(file)
-          }
-        } else if (path.includes('SentryClips/')) {
-          // Extract folder name from path
-          const match = path.match(/SentryClips\/([^/]+)/)
-          const folderName = match?.[1]
-          if (folderName) {
-            if (!categorizedFiles.sentry.has(folderName)) {
-              categorizedFiles.sentry.set(folderName, [])
-            }
-            categorizedFiles.sentry.get(folderName)!.push(file)
-          }
-        }
-      }
-      
-      // Convert to ClipEntry format
-      const recentClips: ClipEntry[] = []
-      const savedClips: ClipEntry[] = []
-      const sentryClips: ClipEntry[] = []
-      
-      // Process RecentClips (use clip detection)
-      for (const [, folderFiles] of categorizedFiles.recent) {
-        const analysis = analyzeClips(folderFiles)
-        for (const clip of analysis.clips) {
-          // Filter to only video files
-          const videoFiles = clip.files.filter(f => f.name.endsWith('.mp4'))
-          if (videoFiles.length > 0) {
-            // Calculate duration from unique timestamps (60 seconds per timestamp)
-            const uniqueTimestamps = new Set(videoFiles.map(f => {
-              const match = f.name.match(/\d{4}-\d{2}-\d{2}_\d{2}-\d{2}-\d{2}/)
-              return match ? match[0] : ''
-            })).size
-            
-            // Load thumbnail
-            const thumbnail = await libraryScannerService.getThumbnail(clip.files)
-            
-            recentClips.push({
-              id: `recent-${clip.startTime.getTime()}`,
-              category: 'recent',
-              timestamp: clip.startTime,
-              duration: uniqueTimestamps * 60,
-              files: clip.files, // Keep all files for event.json, thumb.png
-              cameras: libraryScannerService.getCameras(videoFiles),
-              hasEvent: clip.files.some(f => f.name.toLowerCase() === 'event.json'),
-              ...thumbnail,
-            })
-          }
-        }
-      }
-      
-      // Process SavedClips
-      for (const [folderName, folderFiles] of categorizedFiles.saved) {
-        const timestamp = libraryScannerService.getTimestampFromFolder(folderName)
-        if (timestamp) {
-          const videoFiles = folderFiles.filter(f => f.name.endsWith('.mp4'))
-          if (videoFiles.length > 0) {
-            // Load thumbnail
-            const thumbnail = await libraryScannerService.getThumbnail(folderFiles)
-            
-            savedClips.push({
-              id: `saved-${timestamp.getTime()}-${folderName}`,
-              category: 'saved',
-              timestamp,
-              duration: libraryScannerService.countUniqueTimestamps(videoFiles) * 60,
-              files: folderFiles,
-              cameras: libraryScannerService.getCameras(videoFiles),
-              hasEvent: folderFiles.some(f => f.name.toLowerCase() === 'event.json'),
-              folderName,
-              ...thumbnail,
-            })
-          }
-        }
-      }
-      
-      // Process SentryClips
-      for (const [folderName, folderFiles] of categorizedFiles.sentry) {
-        const timestamp = libraryScannerService.getTimestampFromFolder(folderName)
-        if (timestamp) {
-          const videoFiles = folderFiles.filter(f => f.name.endsWith('.mp4'))
-          if (videoFiles.length > 0) {
-            // Load thumbnail
-            const thumbnail = await libraryScannerService.getThumbnail(folderFiles)
-            
-            sentryClips.push({
-              id: `sentry-${timestamp.getTime()}-${folderName}`,
-              category: 'sentry',
-              timestamp,
-              duration: libraryScannerService.countUniqueTimestamps(videoFiles) * 60,
-              files: folderFiles,
-              cameras: libraryScannerService.getCameras(videoFiles),
-              hasEvent: folderFiles.some(f => f.name.toLowerCase() === 'event.json'),
-              folderName,
-              ...thumbnail,
-            })
-          }
-        }
-      }
-      
-      // Sort by timestamp (newest first)
-      recentClips.sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime())
-      savedClips.sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime())
-      sentryClips.sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime())
-      
-      // Create library object
-      const scannedLibrary: TeslaLibrary = {
-        rootHandle: null as any, // No handle in File[] mode
-        categories: {
-          recent: recentClips,
-          saved: savedClips,
-          sentry: sentryClips,
-        },
-      }
-      
-      setLibrary(scannedLibrary)
-      setLibraryMode(true)
-      
-      // Set initial active category
-      const firstCategory: ClipCategory = 
-        recentClips.length > 0 ? 'recent' :
-        savedClips.length > 0 ? 'saved' : 'sentry'
-      setActiveCategory(firstCategory)
-      
-      // Auto-select first clip
-      const firstClip = scannedLibrary.categories[firstCategory][0]
-      if (firstClip) {
-        await handleLibraryClipSelect(firstClip)
-      }
-    } catch (err) {
-      console.error('Failed to process file array library mode:', err)
-      throw err
     }
   }
 
