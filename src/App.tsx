@@ -360,8 +360,6 @@ function App() {
                 validationError={error}
                 onClearError={() => setError(null)}
               />
-          ) : isLoading ? (
-            <ValidationSpinner />
           ) : libraryMode && library ? (
             <>
               <LibrarySidebar
@@ -373,23 +371,29 @@ function App() {
                 isCollapsed={isLibrarySidebarCollapsed}
                 onToggleCollapse={() => setIsLibrarySidebarCollapsed(!isLibrarySidebarCollapsed)}
               />
-              {videoFiles.length > 0 && (
-                <div className="tesla-clip-player-container">
+              <div className="tesla-clip-player-container">
+                {isLoading ? (
+                  <ValidationSpinner />
+                ) : videoFiles.length > 0 ? (
                   <TeslaClipPlayer 
                     videoFiles={videoFiles}
                     {...(event && { event })}
                     onReset={handleReset}
                   />
-                </div>
-              )}
+                ) : (
+                  <div className="no-clip-selected">
+                    <p>Select a clip from the sidebar to view</p>
+                  </div>
+                )}
+              </div>
             </>
-          ) : (
+          ) : videoFiles.length > 0 ? (
             <TeslaClipPlayer 
               videoFiles={videoFiles}
               {...(event && { event })}
               onReset={handleReset}
             />
-          )}
+          ) : null}
         </main>
 
         {videoFiles.length === 0 && !libraryMode && <Disclaimer />}

@@ -45,6 +45,15 @@
   height: calc(100vh - 64px);
 }
 
+.no-clip-selected {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  color: var(--gray-400);
+  font-size: var(--font-size-lg);
+}
+
 /* Modern button system inspired by Google Material Design */
 button {
   font-family: var(--font-family);
