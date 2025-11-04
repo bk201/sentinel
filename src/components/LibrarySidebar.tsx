@@ -46,38 +46,49 @@ export default function LibrarySidebar({
     { key: 'sentry', label: 'Sentry' },
   ]
 
-  if (isCollapsed) {
-    return (
-      <div className="library-sidebar collapsed">
-        <button
-          className="library-sidebar-toggle"
-          onClick={onToggleCollapse}
-          aria-label="Expand library sidebar"
-        >
-          ▶
-        </button>
-      </div>
-    )
-  }
-
   return (
-    <aside className="library-sidebar">
-      <div className="library-sidebar-header">
-        <h2>Library</h2>
-        {onToggleCollapse && (
+    <aside className={`library-sidebar ${isCollapsed ? 'collapsed' : ''}`}>
+      <div 
+        className="library-sidebar-header"
+        onClick={onToggleCollapse}
+        role="button"
+        tabIndex={0}
+        aria-label={isCollapsed ? "Expand library sidebar" : "Collapse library sidebar"}
+        title={isCollapsed ? "Show All Clips" : "Hide All Clips"}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault()
+            onToggleCollapse?.()
+          }
+        }}
+      >
+        {!isCollapsed ? (
+          <>
+            <h2>All Clips</h2>
+            <button
+              className="library-sidebar-toggle"
+              aria-hidden="true"
+              tabIndex={-1}
+            >
+              ≪
+            </button>
+          </>
+        ) : (
           <button
-            className="library-sidebar-toggle"
-            onClick={onToggleCollapse}
-            aria-label="Collapse library sidebar"
+            className="library-sidebar-toggle collapsed-icon"
+            aria-hidden="true"
+            tabIndex={-1}
           >
-            ◀
+            ≫
           </button>
         )}
       </div>
 
-      {/* Tab Navigation */}
-      <nav className="library-tabs" role="tablist" aria-label="Clip categories">
-        {categories.map(({ key, label }) => {
+      {!isCollapsed && (
+        <>
+          {/* Tab Navigation */}
+          <nav className="library-tabs" role="tablist" aria-label="Clip categories">
+            {categories.map(({ key, label }) => {
           const count = counts[key]
           const isActive = activeCategory === key
           const isDisabled = count === 0
@@ -146,6 +157,8 @@ export default function LibrarySidebar({
           </>
         )}
       </div>
+        </>
+      )}
     </aside>
   )
 }
