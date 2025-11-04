@@ -95,17 +95,6 @@
   font-size: 11px;
 }
 
-/* Active indicator */
-.clip-active-indicator {
-  position: absolute;
-  right: 8px;
-  top: 50%;
-  transform: translateY(-50%);
-  color: var(--color-primary, #4285f4);
-  font-size: 16px;
-  animation: pulse 2s ease-in-out infinite;
-}
-
 @keyframes pulse {
   0%, 100% {
     opacity: 1;

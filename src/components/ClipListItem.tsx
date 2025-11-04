@@ -67,11 +67,6 @@ export default function ClipListItem({ clip, isActive, onClick }: ClipListItemPr
         </div>
       </div>
 
-      {isActive && (
-        <div className="clip-active-indicator" aria-hidden="true">
-          ▶
-        </div>
-      )}
     </div>
   )
 }
