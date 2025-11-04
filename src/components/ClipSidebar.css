@@ -4,14 +4,13 @@
   width: 300px;
   padding: 20px;
   background-color: #242424;
-  border-right: 1px solid #333;
+  border-left: 1px solid #333;
   display: flex;
   flex-direction: column;
   transition: all 0.3s ease-in-out;
   flex-shrink: 0;
   overflow-y: auto;
   overflow-x: hidden;
-  order: -1;
 }
 
 /* Modern Scrollbar Styling */

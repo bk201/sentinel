@@ -1,0 +1,151 @@
+import { useState, useMemo } from 'react'
+import './LibrarySidebar.css'
+import ClipListItem from './ClipListItem'
+import type { TeslaLibrary, ClipEntry, ClipCategory } from '../types/library'
+import { groupClipsByDay } from '../utils/libraryUtils'
+
+interface LibrarySidebarProps {
+  library: TeslaLibrary
+  activeCategory: ClipCategory
+  activeClipId: string | null
+  onCategoryChange: (category: ClipCategory) => void
+  onClipSelect: (clip: ClipEntry) => void
+  isCollapsed?: boolean
+  onToggleCollapse?: () => void
+}
+
+export default function LibrarySidebar({
+  library,
+  activeCategory,
+  activeClipId,
+  onCategoryChange,
+  onClipSelect,
+  isCollapsed = false,
+  onToggleCollapse,
+}: LibrarySidebarProps) {
+  const [hoveredTab, setHoveredTab] = useState<ClipCategory | null>(null)
+
+  // Get clips for active category
+  const clips = library.categories[activeCategory]
+
+  // Group clips by day for better organization
+  const groupedClips = useMemo(() => {
+    return groupClipsByDay(clips)
+  }, [clips])
+
+  // Calculate counts for each category
+  const counts = {
+    recent: library.categories.recent.length,
+    saved: library.categories.saved.length,
+    sentry: library.categories.sentry.length,
+  }
+
+  const categories: { key: ClipCategory; label: string }[] = [
+    { key: 'recent', label: 'Recent' },
+    { key: 'saved', label: 'Saved' },
+    { key: 'sentry', label: 'Sentry' },
+  ]
+
+  if (isCollapsed) {
+    return (
+      <div className="library-sidebar collapsed">
+        <button
+          className="library-sidebar-toggle"
+          onClick={onToggleCollapse}
+          aria-label="Expand library sidebar"
+        >
+          ▶
+        </button>
+      </div>
+    )
+  }
+
+  return (
+    <aside className="library-sidebar">
+      <div className="library-sidebar-header">
+        <h2>Library</h2>
+        {onToggleCollapse && (
+          <button
+            className="library-sidebar-toggle"
+            onClick={onToggleCollapse}
+            aria-label="Collapse library sidebar"
+          >
+            ◀
+          </button>
+        )}
+      </div>
+
+      {/* Tab Navigation */}
+      <nav className="library-tabs" role="tablist" aria-label="Clip categories">
+        {categories.map(({ key, label }) => {
+          const count = counts[key]
+          const isActive = activeCategory === key
+          const isDisabled = count === 0
+          const isHovered = hoveredTab === key
+
+          return (
+            <button
+              key={key}
+              role="tab"
+              aria-selected={isActive}
+              aria-controls={`${key}-clips`}
+              aria-label={`${label} clips (${count})`}
+              disabled={isDisabled}
+              className={`library-tab ${isActive ? 'active' : ''} ${isDisabled ? 'disabled' : ''}`}
+              onClick={() => !isDisabled && onCategoryChange(key)}
+              onMouseEnter={() => setHoveredTab(key)}
+              onMouseLeave={() => setHoveredTab(null)}
+            >
+              <span className="library-tab-label">{label}</span>
+              <span
+                className={`library-tab-count ${isHovered && !isDisabled ? 'highlight' : ''}`}
+              >
+                {count}
+              </span>
+            </button>
+          )
+        })}
+      </nav>
+
+      {/* Clip List */}
+      <div
+        className="library-clip-list"
+        role="tabpanel"
+        id={`${activeCategory}-clips`}
+        aria-label={`${activeCategory} clips list`}
+      >
+        {clips.length === 0 ? (
+          <div className="library-empty-state">
+            <div className="library-empty-icon">📁</div>
+            <p className="library-empty-title">No clips found</p>
+            <p className="library-empty-text">
+              Clips in the {activeCategory} category will appear here
+            </p>
+          </div>
+        ) : (
+          <>
+            {groupedClips.map((dayGroup) => (
+              <div key={dayGroup.dateString} className="library-day-group">
+                <div className="library-day-separator">
+                  <span className="library-day-label">
+                    {dayGroup.dateString}
+                  </span>
+                </div>
+                <div className="library-day-clips">
+                  {dayGroup.clips.map((clip) => (
+                    <ClipListItem
+                      key={clip.id}
+                      clip={clip}
+                      isActive={clip.id === activeClipId}
+                      onClick={onClipSelect}
+                    />
+                  ))}
+                </div>
+              </div>
+            ))}
+          </>
+        )}
+      </div>
+    </aside>
+  )
+}

@@ -515,20 +515,6 @@ const TeslaClipPlayer: React.FC<TeslaClipPlayerProps> = ({ videoFiles, event, on
 
   return (
     <div className="viewer-app">
-      {/* Sidebar */}
-      <ClipSidebar
-        isOpen={isSidebarOpen}
-        onToggle={() => setIsSidebarOpen(!isSidebarOpen)}
-        currentFootage={currentFootage}
-        currentFootageIndex={currentFootageId}
-        totalFootages={totalFootages}
-        totalDuration={timeline.totalDuration}
-        formatTime={formatTime}
-        {...(timeline.clip.event && { event: timeline.clip.event })}
-        onJumpToEvent={handleJumpToEvent}
-        {...(timeline.footages[0]?.footageDate && { clipStartTime: timeline.footages[0].footageDate })}
-      />
-
       {/* Main Content */}
       <div className={`main-content ${!isSidebarOpen ? 'sidebar-closed' : ''}`}>
         {/* Camera Layout */}
@@ -764,6 +750,20 @@ const TeslaClipPlayer: React.FC<TeslaClipPlayerProps> = ({ videoFiles, event, on
           </div>
         </div>
       </div>
+
+      {/* Sidebar - positioned on the right */}
+      <ClipSidebar
+        isOpen={isSidebarOpen}
+        onToggle={() => setIsSidebarOpen(!isSidebarOpen)}
+        currentFootage={currentFootage}
+        currentFootageIndex={currentFootageId}
+        totalFootages={totalFootages}
+        totalDuration={timeline.totalDuration}
+        formatTime={formatTime}
+        {...(timeline.clip.event && { event: timeline.clip.event })}
+        onJumpToEvent={handleJumpToEvent}
+        {...(timeline.footages[0]?.footageDate && { clipStartTime: timeline.footages[0].footageDate })}
+      />
     </div>
   )
 }

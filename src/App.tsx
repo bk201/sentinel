@@ -3,16 +3,20 @@ import './App.css'
 import AppHeader from './components/AppHeader'
 import DropZone from './components/DropZone'
 import TeslaClipPlayer from './components/TeslaClipPlayer'
+import LibrarySidebar from './components/LibrarySidebar'
 import ValidationSpinner from './components/ValidationSpinner'
 import Disclaimer from './components/Disclaimer'
 import ClipSelector from './components/ClipSelector'
 import { TeslaCamService } from './services/TeslaCamService'
 import { TeslaCamFootageService } from './services/TeslaCamFootageService'
+import { LibraryDetectionService } from './services/LibraryDetectionService'
+import { LibraryScannerService } from './services/LibraryScannerService'
 import { DebugProvider } from './contexts/DebugContext'
 import { I18nProvider } from './i18n'
 import { analyzeClips, type DetectedClip } from './utils/clipDetectionUtils'
 import type { ProcessedVideoFile } from './types'
 import type { TeslaClipEvent } from './types/TeslaCamFootage'
+import type { TeslaLibrary, ClipEntry, ClipCategory } from './types/library'
 
 function App() {
   const [videoFiles, setVideoFiles] = useState<ProcessedVideoFile[]>([])
@@ -25,32 +29,124 @@ function App() {
   const [detectedClips, setDetectedClips] = useState<DetectedClip[]>([])
   const [isSelectingClip, setIsSelectingClip] = useState(false)
 
+  // Library mode state
+  const [libraryMode, setLibraryMode] = useState(false)
+  const [library, setLibrary] = useState<TeslaLibrary | null>(null)
+  const [activeClip, setActiveClip] = useState<ClipEntry | null>(null)
+  const [activeCategory, setActiveCategory] = useState<ClipCategory>('recent')
+  const [isLibrarySidebarCollapsed, setIsLibrarySidebarCollapsed] = useState(false)
+  const [libraryDetectionService] = useState(() => new LibraryDetectionService())
+  const [libraryScannerService] = useState(() => new LibraryScannerService())
+
+  // Cleanup function for video resources
+  const cleanupVideoResources = (files: ProcessedVideoFile[]) => {
+    console.log(`Cleaning up ${files.length} video resources...`)
+    files.forEach(file => {
+      // Revoke object URL to free memory
+      if (file.objectURL) {
+        URL.revokeObjectURL(file.objectURL)
+      }
+      // Pause and remove video element
+      if (file.videoElement) {
+        file.videoElement.pause()
+        file.videoElement.removeAttribute('src')
+        file.videoElement.load() // Forces release of resources
+      }
+    })
+  }
+
   // Handle browser back button to return to dropzone
   useEffect(() => {
     const handlePopState = () => {
-      if (videoFiles.length > 0) {
+      if (videoFiles.length > 0 || libraryMode) {
         // User clicked back, return to dropzone
         handleReset()
       }
     }
 
-    // Push a state when video files are loaded
-    if (videoFiles.length > 0) {
-      window.history.pushState({ hasVideos: true }, '', '')
+    // Push a state when video files are loaded or in library mode
+    if (videoFiles.length > 0 || libraryMode) {
+      window.history.pushState({ hasContent: true }, '', '')
     }
 
     window.addEventListener('popstate', handlePopState)
     return () => window.removeEventListener('popstate', handlePopState)
-  }, [videoFiles.length])
+  }, [videoFiles.length, libraryMode])
+
+  // Cleanup video resources on component unmount
+  useEffect(() => {
+    return () => {
+      if (videoFiles.length > 0) {
+        console.log('Component unmounting, cleaning up video resources')
+        cleanupVideoResources(videoFiles)
+      }
+    }
+  }, [videoFiles])
 
   const handleDirectorySelected = async (directoryData: FileSystemDirectoryHandle | File[]) => {
     setIsLoading(true)
     setError(null)
     
     try {
+      console.log('handleDirectorySelected called with:', Array.isArray(directoryData) ? 'File[]' : 'FileSystemDirectoryHandle')
+      
+      // Only use library mode if we have FileSystemDirectoryHandle (not File[])
+      if (!Array.isArray(directoryData)) {
+        console.log('Using File System Access API, validating directory...')
+        // Try to validate as Tesla USB root directory
+        const validation = await libraryDetectionService.validateDirectory(directoryData)
+        
+        console.log('Directory validation result:', validation)
+        
+        if (validation.isValid && validation.isRootDirectory) {
+          // It's a root directory! Scan and enter library mode
+          console.log('Tesla USB root detected, scanning library...')
+          const scannedLibrary = await libraryScannerService.scanLibrary(directoryData)
+          setLibrary(scannedLibrary)
+          setLibraryMode(true)
+          
+          // Set initial active category (first non-empty category)
+          const firstCategory: ClipCategory = 
+            scannedLibrary.categories.recent.length > 0 ? 'recent' :
+            scannedLibrary.categories.saved.length > 0 ? 'saved' : 'sentry'
+          setActiveCategory(firstCategory)
+          
+          // Auto-select first clip in the active category
+          const firstClip = scannedLibrary.categories[firstCategory][0]
+          if (firstClip) {
+            await handleLibraryClipSelect(firstClip)
+          }
+          
+          setIsLoading(false)
+          return
+        }
+        
+        // If validation says it's a fallback (video files in directory), continue with normal flow
+        console.log('Not a root directory, using fallback mode')
+      }
+      
+      // Normal single-clip flow (existing code)
       let files: File[] = []
       
       if (Array.isArray(directoryData)) {
+        // File input fallback - analyze structure for library mode
+        console.log('Analyzing file paths for library structure...')
+        
+        // Check if files have paths indicating RecentClips/SavedClips/SentryClips structure
+        const hasLibraryStructure = directoryData.some(file => {
+          const path = file.webkitRelativePath || file.name
+          return path.includes('RecentClips') || path.includes('SavedClips') || path.includes('SentryClips')
+        })
+        
+        if (hasLibraryStructure) {
+          console.log('Library structure detected in file paths, entering library mode...')
+          // Enter library mode using file path analysis
+          await handleFileArrayLibraryMode(directoryData)
+          setIsLoading(false)
+          return
+        }
+        
+        console.log('No library structure, processing as single clip')
         // File input fallback - files already available
         // Filter to only include files in the root directory (not subdirectories)
         files = directoryData.filter(file => {
@@ -149,21 +245,266 @@ function App() {
     setDetectedClips([])
   }
 
+  const handleLibraryClipSelect = async (clip: ClipEntry) => {
+    setActiveClip(clip)
+    setIsLoading(true)
+    setError(null)
+
+    try {
+      console.log(`Loading clip from library: ${clip.id}`)
+
+      // Clean up old video resources before loading new ones
+      if (videoFiles.length > 0) {
+        cleanupVideoResources(videoFiles)
+      }
+
+      // Get files from the clip
+      const files = clip.files
+
+      // Parse event.json if present
+      const parsedEvent = await TeslaCamFootageService.parseEventJson(files)
+      setEvent(parsedEvent)
+
+      // Filter to only video files (exclude event.json, thumb.png, etc.)
+      const clipVideoFiles = files.filter(f => f.name.endsWith('.mp4'))
+      
+      if (clipVideoFiles.length === 0) {
+        throw new Error('No video files found in clip')
+      }
+
+      // Process files using TeslaCamService
+      const processedFiles = await teslaCamService.processVideoFiles(clipVideoFiles)
+      setVideoFiles(processedFiles)
+    } catch (err) {
+      console.error('Failed to load clip:', err)
+      setError(err instanceof Error ? err.message : 'Failed to load clip')
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  const handleLibraryCategoryChange = (category: ClipCategory) => {
+    setActiveCategory(category)
+    
+    // Auto-select first clip in the new category
+    if (library) {
+      const firstClip = library.categories[category][0]
+      if (firstClip) {
+        handleLibraryClipSelect(firstClip)
+      } else {
+        // Category is empty, clear player
+        setVideoFiles([])
+        setEvent(undefined)
+        setActiveClip(null)
+      }
+    }
+  }
+
+  const handleFileArrayLibraryMode = async (files: File[]) => {
+    try {
+      console.log('Processing file array for library mode...')
+      
+      // Group files by category based on paths
+      const categorizedFiles: {
+        recent: Map<string, File[]>
+        saved: Map<string, File[]>
+        sentry: Map<string, File[]>
+      } = {
+        recent: new Map(),
+        saved: new Map(),
+        sentry: new Map(),
+      }
+      
+      // Organize files by category and folder
+      for (const file of files) {
+        const path = file.webkitRelativePath || file.name
+        
+        if (path.includes('RecentClips/')) {
+          // RecentClips files are directly in the folder
+          const key = 'recent-all'
+          if (!categorizedFiles.recent.has(key)) {
+            categorizedFiles.recent.set(key, [])
+          }
+          categorizedFiles.recent.get(key)!.push(file)
+        } else if (path.includes('SavedClips/')) {
+          // Extract folder name from path like "TeslaCam/SavedClips/2025-10-27_14-30-25/..."
+          const match = path.match(/SavedClips\/([^/]+)/)
+          const folderName = match?.[1]
+          if (folderName) {
+            if (!categorizedFiles.saved.has(folderName)) {
+              categorizedFiles.saved.set(folderName, [])
+            }
+            categorizedFiles.saved.get(folderName)!.push(file)
+          }
+        } else if (path.includes('SentryClips/')) {
+          // Extract folder name from path
+          const match = path.match(/SentryClips\/([^/]+)/)
+          const folderName = match?.[1]
+          if (folderName) {
+            if (!categorizedFiles.sentry.has(folderName)) {
+              categorizedFiles.sentry.set(folderName, [])
+            }
+            categorizedFiles.sentry.get(folderName)!.push(file)
+          }
+        }
+      }
+      
+      // Convert to ClipEntry format
+      const recentClips: ClipEntry[] = []
+      const savedClips: ClipEntry[] = []
+      const sentryClips: ClipEntry[] = []
+      
+      // Process RecentClips (use clip detection)
+      for (const [, folderFiles] of categorizedFiles.recent) {
+        const analysis = analyzeClips(folderFiles)
+        for (const clip of analysis.clips) {
+          // Filter to only video files
+          const videoFiles = clip.files.filter(f => f.name.endsWith('.mp4'))
+          if (videoFiles.length > 0) {
+            // Calculate duration from unique timestamps (60 seconds per timestamp)
+            const uniqueTimestamps = new Set(videoFiles.map(f => {
+              const match = f.name.match(/\d{4}-\d{2}-\d{2}_\d{2}-\d{2}-\d{2}/)
+              return match ? match[0] : ''
+            })).size
+            
+            // Load thumbnail
+            const thumbnail = await libraryScannerService.getThumbnail(clip.files)
+            
+            recentClips.push({
+              id: `recent-${clip.startTime.getTime()}`,
+              category: 'recent',
+              timestamp: clip.startTime,
+              duration: uniqueTimestamps * 60,
+              files: clip.files, // Keep all files for event.json, thumb.png
+              cameras: libraryScannerService.getCameras(videoFiles),
+              hasEvent: clip.files.some(f => f.name.toLowerCase() === 'event.json'),
+              ...thumbnail,
+            })
+          }
+        }
+      }
+      
+      // Process SavedClips
+      for (const [folderName, folderFiles] of categorizedFiles.saved) {
+        const timestamp = libraryScannerService.getTimestampFromFolder(folderName)
+        if (timestamp) {
+          const videoFiles = folderFiles.filter(f => f.name.endsWith('.mp4'))
+          if (videoFiles.length > 0) {
+            // Load thumbnail
+            const thumbnail = await libraryScannerService.getThumbnail(folderFiles)
+            
+            savedClips.push({
+              id: `saved-${timestamp.getTime()}-${folderName}`,
+              category: 'saved',
+              timestamp,
+              duration: libraryScannerService.countUniqueTimestamps(videoFiles) * 60,
+              files: folderFiles,
+              cameras: libraryScannerService.getCameras(videoFiles),
+              hasEvent: folderFiles.some(f => f.name.toLowerCase() === 'event.json'),
+              folderName,
+              ...thumbnail,
+            })
+          }
+        }
+      }
+      
+      // Process SentryClips
+      for (const [folderName, folderFiles] of categorizedFiles.sentry) {
+        const timestamp = libraryScannerService.getTimestampFromFolder(folderName)
+        if (timestamp) {
+          const videoFiles = folderFiles.filter(f => f.name.endsWith('.mp4'))
+          if (videoFiles.length > 0) {
+            // Load thumbnail
+            const thumbnail = await libraryScannerService.getThumbnail(folderFiles)
+            
+            sentryClips.push({
+              id: `sentry-${timestamp.getTime()}-${folderName}`,
+              category: 'sentry',
+              timestamp,
+              duration: libraryScannerService.countUniqueTimestamps(videoFiles) * 60,
+              files: folderFiles,
+              cameras: libraryScannerService.getCameras(videoFiles),
+              hasEvent: folderFiles.some(f => f.name.toLowerCase() === 'event.json'),
+              folderName,
+              ...thumbnail,
+            })
+          }
+        }
+      }
+      
+      // Sort by timestamp (newest first)
+      recentClips.sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime())
+      savedClips.sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime())
+      sentryClips.sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime())
+      
+      // Create library object
+      const scannedLibrary: TeslaLibrary = {
+        rootHandle: null as any, // No handle in File[] mode
+        categories: {
+          recent: recentClips,
+          saved: savedClips,
+          sentry: sentryClips,
+        },
+      }
+      
+      setLibrary(scannedLibrary)
+      setLibraryMode(true)
+      
+      // Set initial active category
+      const firstCategory: ClipCategory = 
+        recentClips.length > 0 ? 'recent' :
+        savedClips.length > 0 ? 'saved' : 'sentry'
+      setActiveCategory(firstCategory)
+      
+      // Auto-select first clip
+      const firstClip = scannedLibrary.categories[firstCategory][0]
+      if (firstClip) {
+        await handleLibraryClipSelect(firstClip)
+      }
+    } catch (err) {
+      console.error('Failed to process file array library mode:', err)
+      throw err
+    }
+  }
+
   const handleReset = () => {
+    // Clean up video resources before clearing state
+    if (videoFiles.length > 0) {
+      cleanupVideoResources(videoFiles)
+    }
+    
+    // Clean up thumbnail URLs from library
+    if (library) {
+      const allClips = [
+        ...library.categories.recent,
+        ...library.categories.saved,
+        ...library.categories.sentry
+      ]
+      allClips.forEach(clip => {
+        if (clip.thumbnailUrl) {
+          URL.revokeObjectURL(clip.thumbnailUrl)
+        }
+      })
+    }
+    
     setVideoFiles([])
     setEvent(undefined)
     setError(null)
+    setLibraryMode(false)
+    setLibrary(null)
+    setActiveClip(null)
+    setActiveCategory('recent')
   }
 
   return (
     <DebugProvider>
       <div className="app">
         <AppHeader 
-          {...(videoFiles.length > 0 && { onLogoClick: handleReset })}
+          {...((videoFiles.length > 0 || libraryMode) && { onLogoClick: handleReset })}
         />
 
-        <main className="app-main">
-          {!isLoading && videoFiles.length === 0 ? (
+        <main className={`app-main ${libraryMode ? 'library-mode' : ''}`}>
+          {!isLoading && videoFiles.length === 0 && !libraryMode ? (
               <DropZone 
                 onDirectorySelected={handleDirectorySelected}
                 isLoading={isLoading}
@@ -172,6 +513,27 @@ function App() {
               />
           ) : isLoading ? (
             <ValidationSpinner />
+          ) : libraryMode && library ? (
+            <>
+              <LibrarySidebar
+                library={library}
+                activeCategory={activeCategory}
+                activeClipId={activeClip?.id || null}
+                onCategoryChange={handleLibraryCategoryChange}
+                onClipSelect={handleLibraryClipSelect}
+                isCollapsed={isLibrarySidebarCollapsed}
+                onToggleCollapse={() => setIsLibrarySidebarCollapsed(!isLibrarySidebarCollapsed)}
+              />
+              {videoFiles.length > 0 && (
+                <div className="tesla-clip-player-container">
+                  <TeslaClipPlayer 
+                    videoFiles={videoFiles}
+                    {...(event && { event })}
+                    onReset={handleReset}
+                  />
+                </div>
+              )}
+            </>
           ) : (
             <TeslaClipPlayer 
               videoFiles={videoFiles}
@@ -181,7 +543,7 @@ function App() {
           )}
         </main>
 
-        {videoFiles.length === 0 && <Disclaimer />}
+        {videoFiles.length === 0 && !libraryMode && <Disclaimer />}
         
         {/* Clip Selection Modal */}
         {isSelectingClip && detectedClips.length > 0 && (

@@ -19,6 +19,30 @@
   width: 100%;
   margin: 0 auto;
   position: relative;
+  display: flex;
+  flex-direction: row;
+}
+
+/* Library mode layout */
+.app-main.library-mode {
+  display: flex;
+  flex-direction: row;
+  gap: 0;
+  overflow: visible;
+}
+
+.app-main.library-mode > * {
+  flex-shrink: 0;
+}
+
+.app-main.library-mode .library-sidebar {
+  height: calc(100vh - 64px); /* Account for header height */
+}
+
+.app-main.library-mode .tesla-clip-player-container {
+  flex: 1;
+  min-width: 0;
+  height: calc(100vh - 64px);
 }
 
 /* Modern button system inspired by Google Material Design */
@@ -120,6 +144,12 @@ button:disabled {
 }
 
 /* Responsive design */
+@media (max-width: 1024px) {
+  .app-main.library-mode .library-sidebar {
+    width: 240px;
+  }
+}
+
 @media (max-width: 768px) {
   .app-header {
     padding: var(--space-4);
@@ -135,5 +165,28 @@ button:disabled {
   
   .app-main {
     padding: var(--space-4);
+  }
+
+  .app-main.library-mode {
+    padding: 0;
+    flex-direction: column;
+  }
+
+  .app-main.library-mode .library-sidebar {
+    width: 100%;
+    height: auto;
+    max-height: 40vh;
+    border-right: none;
+    border-bottom: 1px solid var(--border-color, #e0e0e0);
+  }
+
+  .app-main.library-mode .library-sidebar.collapsed {
+    height: 48px;
+    max-height: 48px;
+  }
+
+  .app-main.library-mode .tesla-clip-player-container {
+    height: auto;
+    min-height: 60vh;
   }
 }
