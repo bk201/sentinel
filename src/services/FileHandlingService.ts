@@ -4,6 +4,7 @@ export class FileHandlingService {
   private objectURLs = new Set<string>()
   private readonly MAX_CONCURRENT_LOADS = 4
   private readonly VIDEO_METADATA_TIMEOUT = 10000 // 10 seconds
+  private readonly isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent)
 
   async processVideoFiles(files: File[]): Promise<ProcessedVideoFile[]> {
     if (files.length === 0) {
@@ -36,7 +37,14 @@ export class FileHandlingService {
     }
 
     // Create a Blob with an explicit MIME type to improve Safari compatibility
-    const mimeType = file.type && file.type.startsWith('video/') ? file.type : 'video/mp4'
+    // Safari benefits from explicit codec information in the MIME type
+    let mimeType = file.type && file.type.startsWith('video/') ? file.type : 'video/mp4'
+    
+    // For Safari, add codec hint if not present to improve buffering behavior
+    if (this.isSafari && !mimeType.includes('codecs=')) {
+      mimeType = 'video/mp4; codecs="avc1.42E01E, mp4a.40.2"'
+    }
+    
     const blob = new Blob([file], { type: mimeType })
     const objectURL = URL.createObjectURL(blob)
     this.objectURLs.add(objectURL)
@@ -46,10 +54,16 @@ export class FileHandlingService {
 
   async loadVideoMetadata(file: File): Promise<{ duration: number; width: number; height: number }> {
     return new Promise((resolve, reject) => {
-  const video = document.createElement('video')
-  const mimeType = file.type && file.type.startsWith('video/') ? file.type : 'video/mp4'
-  const blob = new Blob([file], { type: mimeType })
-  const objectURL = URL.createObjectURL(blob)
+      const video = document.createElement('video')
+      
+      // Safari-optimized MIME type with codec hints
+      let mimeType = file.type && file.type.startsWith('video/') ? file.type : 'video/mp4'
+      if (this.isSafari && !mimeType.includes('codecs=')) {
+        mimeType = 'video/mp4; codecs="avc1.42E01E, mp4a.40.2"'
+      }
+      
+      const blob = new Blob([file], { type: mimeType })
+      const objectURL = URL.createObjectURL(blob)
 
       const cleanup = () => {
         URL.revokeObjectURL(objectURL)

@@ -565,6 +565,9 @@ const TeslaClipPlayer: React.FC<TeslaClipPlayerProps> = ({ videoFiles, event, on
                         videoRefs.current.delete(cameraPosition)
                       }
                     }}
+                    preload="auto"
+                    playsInline
+                    crossOrigin="anonymous"
                     onSeeked={() => {
                       const ref = videoRefs.current.get(cameraPosition)
 
