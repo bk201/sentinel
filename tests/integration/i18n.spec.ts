@@ -52,7 +52,7 @@ test.describe('Language Switcher', () => {
     await expect(dropdown).toBeVisible()
     
     // Click outside (on the main content)
-    await page.locator('.drop-zone').click()
+    await page.locator('.requirements').click()
     
     // Dropdown should close
     await expect(dropdown).not.toBeVisible()
