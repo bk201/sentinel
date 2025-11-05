@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react'
+import { useMemo } from 'react'
 import './LibrarySidebar.css'
 import ClipListItem from './ClipListItem'
 import type { TeslaLibrary, ClipEntry, ClipCategory } from '../types/library'
@@ -23,8 +23,6 @@ export default function LibrarySidebar({
   isCollapsed = false,
   onToggleCollapse,
 }: LibrarySidebarProps) {
-  const [hoveredTab, setHoveredTab] = useState<ClipCategory | null>(null)
-
   // Get clips for active category
   const clips = library.categories[activeCategory]
 
@@ -45,6 +43,12 @@ export default function LibrarySidebar({
     { key: 'saved', label: 'Saved' },
     { key: 'sentry', label: 'Sentry' },
   ]
+
+  // Filter categories: if only one has clips, show only that one
+  const visibleCategories = useMemo(() => {
+    const categoriesWithClips = categories.filter(({ key }) => counts[key] > 0)
+    return categoriesWithClips.length === 1 ? categoriesWithClips : categories
+  }, [counts])
 
   return (
     <aside className={`library-sidebar ${isCollapsed ? 'collapsed' : ''}`}>
@@ -88,35 +92,30 @@ export default function LibrarySidebar({
         <>
           {/* Tab Navigation */}
           <nav className="library-tabs" role="tablist" aria-label="Clip categories">
-            {categories.map(({ key, label }) => {
-          const count = counts[key]
-          const isActive = activeCategory === key
-          const isDisabled = count === 0
-          const isHovered = hoveredTab === key
+            {visibleCategories.map(({ key, label }) => {
+              const count = counts[key]
+              const isActive = activeCategory === key
+              const isDisabled = count === 0
 
-          return (
-            <button
-              key={key}
-              role="tab"
-              aria-selected={isActive}
-              aria-controls={`${key}-clips`}
-              aria-label={`${label} clips (${count})`}
-              disabled={isDisabled}
-              className={`library-tab ${isActive ? 'active' : ''} ${isDisabled ? 'disabled' : ''}`}
-              onClick={() => !isDisabled && onCategoryChange(key)}
-              onMouseEnter={() => setHoveredTab(key)}
-              onMouseLeave={() => setHoveredTab(null)}
-            >
-              <span className="library-tab-label">{label}</span>
-              <span
-                className={`library-tab-count ${isHovered && !isDisabled ? 'highlight' : ''}`}
-              >
-                {count}
-              </span>
-            </button>
-          )
-        })}
-      </nav>
+              return (
+                <button
+                  key={key}
+                  role="tab"
+                  aria-selected={isActive}
+                  aria-controls={`${key}-clips`}
+                  aria-label={`${label} clips (${count})`}
+                  disabled={isDisabled}
+                  className={`library-tab ${isActive ? 'active' : ''} ${isDisabled ? 'disabled' : ''}`}
+                  onClick={() => !isDisabled && onCategoryChange(key)}
+                >
+                  <span className="library-tab-label">{label}</span>
+                  <span className="library-tab-count">
+                    {count}
+                  </span>
+                </button>
+              )
+            })}
+          </nav>
 
       {/* Clip List */}
       <div

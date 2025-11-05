@@ -157,7 +157,7 @@
   color: var(--color-primary, #4285f4);
 }
 
-.library-tab-count.highlight {
+.library-tab:hover:not(.disabled) .library-tab-count {
   transform: scale(1.1);
 }
 
