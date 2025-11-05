@@ -110,7 +110,6 @@ describe('libraryUtils', () => {
       timestamp: new Date(timestamp),
       duration: 60,
       files: [],
-      cameras: ['front'],
       hasEvent: false
     })
 
