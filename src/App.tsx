@@ -12,13 +12,14 @@ import { TeslaCamFootageService } from './services/TeslaCamFootageService'
 import { LibraryDetectionService } from './services/LibraryDetectionService'
 import { LibraryScannerService } from './services/LibraryScannerService'
 import { DebugProvider } from './contexts/DebugContext'
-import { I18nProvider } from './i18n'
+import { I18nProvider, useI18n } from './i18n'
 import { analyzeClips, type DetectedClip } from './utils/clipDetectionUtils'
 import type { ProcessedVideoFile } from './types'
 import type { TeslaClipEvent } from './types/TeslaCamFootage'
 import type { TeslaLibrary, ClipEntry, ClipCategory } from './types/library'
 
 function App() {
+  const { t } = useI18n()
   const [videoFiles, setVideoFiles] = useState<ProcessedVideoFile[]>([])
   const [event, setEvent] = useState<TeslaClipEvent | undefined>(undefined)
   const [isLoading, setIsLoading] = useState(false)
@@ -382,7 +383,7 @@ function App() {
                   />
                 ) : (
                   <div className="no-clip-selected">
-                    <p>Select a clip from the sidebar to view</p>
+                    <p>{t.library.selectClip}</p>
                   </div>
                 )}
               </div>

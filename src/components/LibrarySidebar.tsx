@@ -1,4 +1,5 @@
 import { useMemo } from 'react'
+import { useI18n } from '../i18n'
 import './LibrarySidebar.css'
 import ClipListItem from './ClipListItem'
 import type { TeslaLibrary, ClipEntry, ClipCategory } from '../types/library'
@@ -23,6 +24,8 @@ export default function LibrarySidebar({
   isCollapsed = false,
   onToggleCollapse,
 }: LibrarySidebarProps) {
+  const { t } = useI18n()
+
   // Get clips for active category
   const clips = library.categories[activeCategory]
 
@@ -39,16 +42,16 @@ export default function LibrarySidebar({
   }
 
   const categories: { key: ClipCategory; label: string }[] = [
-    { key: 'recent', label: 'Recent' },
-    { key: 'saved', label: 'Saved' },
-    { key: 'sentry', label: 'Sentry' },
+    { key: 'recent', label: t.library.recent },
+    { key: 'saved', label: t.library.saved },
+    { key: 'sentry', label: t.library.sentry },
   ]
 
   // Filter categories: if only one has clips, show only that one
   const visibleCategories = useMemo(() => {
     const categoriesWithClips = categories.filter(({ key }) => counts[key] > 0)
     return categoriesWithClips.length === 1 ? categoriesWithClips : categories
-  }, [counts])
+  }, [counts, t])
 
   return (
     <aside className={`library-sidebar ${isCollapsed ? 'collapsed' : ''}`}>
@@ -57,8 +60,8 @@ export default function LibrarySidebar({
         onClick={onToggleCollapse}
         role="button"
         tabIndex={0}
-        aria-label={isCollapsed ? "Expand library sidebar" : "Collapse library sidebar"}
-        title={isCollapsed ? "Show All Clips" : "Hide All Clips"}
+        aria-label={isCollapsed ? t.library.allClips : t.library.allClips}
+        title={isCollapsed ? t.library.allClips : t.library.allClips}
         onKeyDown={(e) => {
           if (e.key === 'Enter' || e.key === ' ') {
             e.preventDefault()
@@ -68,7 +71,7 @@ export default function LibrarySidebar({
       >
         {!isCollapsed ? (
           <>
-            <h2>All Clips</h2>
+            <h2>{t.library.allClips}</h2>
             <button
               className="library-sidebar-toggle"
               aria-hidden="true"
@@ -127,9 +130,9 @@ export default function LibrarySidebar({
         {clips.length === 0 ? (
           <div className="library-empty-state">
             <div className="library-empty-icon">📁</div>
-            <p className="library-empty-title">No clips found</p>
+            <p className="library-empty-title">{t.library.noClips}</p>
             <p className="library-empty-text">
-              Clips in the {activeCategory} category will appear here
+              {t.library.selectClip}
             </p>
           </div>
         ) : (

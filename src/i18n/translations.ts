@@ -101,6 +101,16 @@ export interface Translations {
     showDetails: string
     closeDetails: string
   }
+
+  // Library Sidebar
+  library: {
+    allClips: string
+    recent: string
+    saved: string
+    sentry: string
+    noClips: string
+    selectClip: string
+  }
   
   // Event Info
   event: {
@@ -170,8 +180,8 @@ export const translations: Record<Language, Translations> = {
     },
     requirements: {
       title: 'Requirements:',
-      folderFormat: 'Tesla dashcam folder with timestamp format (YYYY-MM-DD_HH-MM-SS)',
-      example: 'For example, the "2025-10-20_19-52-58" folder in the "SentryClips" folder',
+      folderFormat: 'Tesla USB root folder (TeslaCam) with RecentClips, SavedClips, and/or SentryClips',
+      example: 'Or a specific clip folder like "2025-10-20_19-52-58" inside SavedClips/SentryClips',
       browserSupport: 'Works in all modern browsers (Chrome, Firefox, Safari, Edge)',
       demoVideoDescription: 'Watch how to select and view your Tesla dashcam clips'
     },
@@ -223,6 +233,14 @@ export const translations: Record<Language, Translations> = {
       videoFiles: 'Video Files',
       showDetails: 'Show Details',
       closeDetails: 'Close Details'
+    },
+    library: {
+      allClips: 'All Clips',
+      recent: 'Recent',
+      saved: 'Saved',
+      sentry: 'Sentry',
+      noClips: 'No clips in this category',
+      selectClip: 'Select a clip from the sidebar to view'
     },
     event: {
       title: 'Event Information',
@@ -285,8 +303,8 @@ export const translations: Record<Language, Translations> = {
     },
     requirements: {
       title: '系統要求：',
-      folderFormat: 'Tesla 行車記錄資料夾，時間戳記格式為 (YYYY-MM-DD_HH-MM-SS)',
-      example: '例如，「SentryClips」資料夾中的「2025-10-20_19-52-58」資料夾',
+      folderFormat: 'Tesla USB 根目錄 (TeslaCam)，包含 RecentClips、SavedClips 和/或 SentryClips',
+      example: '或是 SavedClips/SentryClips 內的特定片段資料夾，例如「2025-10-20_19-52-58」',
       browserSupport: '支援所有現代瀏覽器（Chrome、Firefox、Safari、Edge）',
       demoVideoDescription: '觀看如何選擇和檢視您的 Tesla 行車記錄影片'
     },
@@ -338,6 +356,14 @@ export const translations: Record<Language, Translations> = {
       videoFiles: '影片檔案',
       showDetails: '顯示詳情',
       closeDetails: '關閉詳情'
+    },
+    library: {
+      allClips: '所有片段',
+      recent: '最近',
+      saved: '已儲存',
+      sentry: '哨兵',
+      noClips: '此類別中沒有片段',
+      selectClip: '從側邊欄選擇片段以檢視'
     },
     event: {
       title: '事件資訊',
@@ -400,8 +426,8 @@ export const translations: Record<Language, Translations> = {
     },
     requirements: {
       title: '系统要求：',
-      folderFormat: 'Tesla 行车记录文件夹，时间戳格式为 (YYYY-MM-DD_HH-MM-SS)',
-      example: '例如，"SentryClips"文件夹中的"2025-10-20_19-52-58"文件夹',
+      folderFormat: 'Tesla USB 根目录 (TeslaCam)，包含 RecentClips、SavedClips 和/或 SentryClips',
+      example: '或是 SavedClips/SentryClips 内的特定片段文件夹，例如"2025-10-20_19-52-58"',
       browserSupport: '支持所有现代浏览器（Chrome、Firefox、Safari、Edge）',
       demoVideoDescription: '观看如何选择和查看您的 Tesla 行车记录视频'
     },
@@ -453,6 +479,14 @@ export const translations: Record<Language, Translations> = {
       videoFiles: '视频文件',
       showDetails: '显示详情',
       closeDetails: '关闭详情'
+    },
+    library: {
+      allClips: '所有片段',
+      recent: '最近',
+      saved: '已保存',
+      sentry: '哨兵',
+      noClips: '此类别中没有片段',
+      selectClip: '从侧边栏选择片段以查看'
     },
     event: {
       title: '事件信息',
@@ -515,8 +549,8 @@ export const translations: Record<Language, Translations> = {
     },
     requirements: {
       title: '要件：',
-      folderFormat: 'タイムスタンプ形式（YYYY-MM-DD_HH-MM-SS）の Tesla ドライブレコーダーフォルダ',
-      example: '例：「SentryClips」フォルダ内の「2025-10-20_19-52-58」フォルダ',
+      folderFormat: 'Tesla USB ルートフォルダ (TeslaCam)、RecentClips、SavedClips、SentryClips を含む',
+      example: 'または SavedClips/SentryClips 内の特定のクリップフォルダ（例：「2025-10-20_19-52-58」）',
       browserSupport: 'すべてのモダンブラウザ（Chrome、Firefox、Safari、Edge）に対応',
       demoVideoDescription: 'Tesla ドライブレコーダー映像の選択と表示方法をご覧ください'
     },
@@ -568,6 +602,14 @@ export const translations: Record<Language, Translations> = {
       videoFiles: 'ビデオファイル',
       showDetails: '詳細を表示',
       closeDetails: '詳細を閉じる'
+    },
+    library: {
+      allClips: 'すべてのクリップ',
+      recent: '最近',
+      saved: '保存済み',
+      sentry: 'セントリー',
+      noClips: 'このカテゴリにクリップがありません',
+      selectClip: 'サイドバーからクリップを選択して表示'
     },
     event: {
       title: 'イベント情報',
