@@ -42,6 +42,8 @@ jobs:
     permissions:
       pages: write      # to deploy to Pages
       id-token: write   # to verify the deployment originates from an appropriate source
+    env:
+      GOOGLE_SITE_VERIFICATION: ${{ vars.GOOGLE_SITE_VERIFICATION }}
     
     steps:
     - uses: actions/checkout@v4
@@ -59,6 +61,13 @@ jobs:
       env:
         GITHUB_PAGES: 'true'
         VITE_APP_REVISION: ${{ github.sha }}
+
+    - name: Create Google Site Verification File (token-named)
+      if: ${{ env.GOOGLE_SITE_VERIFICATION != '' }}
+      run: |
+        set -euo pipefail
+        FILENAME="dist/${GOOGLE_SITE_VERIFICATION}"
+        printf 'google-site-verification: %s' "$GOOGLE_SITE_VERIFICATION" > "$FILENAME"
 
     - name: Upload Production Build Artifact
       uses: actions/upload-pages-artifact@v4
