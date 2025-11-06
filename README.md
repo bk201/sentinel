@@ -7,7 +7,7 @@ A client-side web application for viewing Tesla dashcam clips. All video process
 
 - Watch the introduction video:
 
-   [![Watch the introduction video](https://img.youtube.com/vi/JkWgvckqVkU/hqdefault.jpg)](https://youtu.be/JkWgvckqVkU)
+   [![Watch the introduction video](https://img.youtube.com/vi/IIATsttPHDk/hqdefault.jpg)](https://youtu.be/IIATsttPHDk)
 
 
 I created this project for fun to experience the benefits and drawbacks of “vibe” programming. Feel free to report issues or submit PRs!

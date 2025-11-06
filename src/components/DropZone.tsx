@@ -206,13 +206,13 @@ const DropZone: React.FC<DropZoneProps> = ({
 
         <div className="demo-video">
           <a 
-            href="https://youtu.be/JkWgvckqVkU" 
+            href="https://youtu.be/IIATsttPHDk"
             target="_blank" 
             rel="noopener noreferrer"
             className="video-link"
           >
             <img 
-              src="https://img.youtube.com/vi/JkWgvckqVkU/hqdefault.jpg"
+              src="https://img.youtube.com/vi/IIATsttPHDk/hqdefault.jpg"
               alt="Sentinel Demo - How to use the Tesla Dashcam Viewer"
               className="video-thumbnail"
             />
