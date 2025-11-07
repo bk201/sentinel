@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="640" height="360" viewBox="0 0 640 360">
+  <rect fill="#1a1a1a" width="640" height="360"/>
+  
+  <!-- Map mockup -->
+  <rect fill="#2a2a2a" x="20" y="20" width="600" height="320" rx="8"/>
+  
+  <!-- Map grid lines -->
+  <line x1="20" y1="120" x2="620" y2="120" stroke="#444" stroke-width="1"/>
+  <line x1="20" y1="220" x2="620" y2="220" stroke="#444" stroke-width="1"/>
+  <line x1="170" y1="20" x2="170" y2="340" stroke="#444" stroke-width="1"/>
+  <line x1="320" y1="20" x2="320" y2="340" stroke="#444" stroke-width="1"/>
+  <line x1="470" y1="20" x2="470" y2="340" stroke="#444" stroke-width="1"/>
+  
+  <!-- Road paths -->
+  <rect fill="#555" x="140" y="40" width="30" height="280" rx="2"/>
+  <rect fill="#555" x="40" y="190" width="560" height="30" rx="2"/>
+  
+  <!-- Event marker (red pin) -->
+  <g transform="translate(400, 160)">
+    <circle fill="#ef4444" cx="0" cy="0" r="16"/>
+    <path fill="#fff" d="M 0,-8 L -6,2 L 0,6 L 6,2 Z"/>
+    <circle fill="#1a1a1a" cx="0" cy="0" r="4"/>
+  </g>
+  
+  <!-- GPS coordinates label -->
+  <rect fill="#0a0a0a" x="340" y="120" width="180" height="30" rx="4" opacity="0.9"/>
+  <text x="430" y="140" font-family="sans-serif" font-size="12" fill="#3b82f6" text-anchor="middle" font-weight="600">37.7749°N, 122.4194°W</text>
+  
+  <!-- Map controls -->
+  <rect fill="#0a0a0a" x="560" y="40" width="40" height="80" rx="6"/>
+  <text x="580" y="60" font-family="sans-serif" font-size="18" fill="#ccc" text-anchor="middle">+</text>
+  <line x1="565" y1="75" x2="595" y2="75" stroke="#555" stroke-width="1"/>
+  <text x="580" y="100" font-family="sans-serif" font-size="18" fill="#ccc" text-anchor="middle">−</text>
+</svg>

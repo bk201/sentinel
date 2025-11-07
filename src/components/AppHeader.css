@@ -148,6 +148,35 @@
   display: block;
 }
 
+/* Help link button */
+.app-header .help-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #B0B0B0;
+  background: transparent;
+  border: none;
+  padding: 0.5rem;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  margin-right: 0.5rem;
+}
+
+.app-header .help-link:hover {
+  color: #FFFFFF;
+  background: rgba(255, 255, 255, 0.08);
+  transform: scale(1.1);
+}
+
+.app-header .help-link:active {
+  transform: scale(0.95);
+}
+
+.app-header .help-link svg {
+  display: block;
+}
+
 
 
 

@@ -6,9 +6,10 @@ import './AppHeader.css'
 
 interface AppHeaderProps {
   onLogoClick?: () => void
+  onHelpClick?: () => void
 }
 
-const AppHeader: React.FC<AppHeaderProps> = ({ onLogoClick }) => {
+const AppHeader: React.FC<AppHeaderProps> = ({ onLogoClick, onHelpClick }) => {
   const isDevelopment = import.meta.env.DEV
   const { debugMode, setDebugMode } = useDebugMode()
 
@@ -24,6 +25,18 @@ const AppHeader: React.FC<AppHeaderProps> = ({ onLogoClick }) => {
           Sentinel
         </h1>
       </div>
+      <button
+        className="help-link"
+        onClick={onHelpClick}
+        title="Help & Documentation"
+        aria-label="Open help and documentation"
+      >
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+          <circle cx="12" cy="12" r="10"></circle>
+          <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+          <line x1="12" y1="17" x2="12.01" y2="17"></line>
+        </svg>
+      </button>
       <a 
         href="https://github.com/bk201/sentinel" 
         target="_blank" 

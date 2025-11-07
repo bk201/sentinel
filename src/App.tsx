@@ -7,6 +7,7 @@ import LibrarySidebar from './components/LibrarySidebar'
 import ValidationSpinner from './components/ValidationSpinner'
 import Disclaimer from './components/Disclaimer'
 import ClipSelector from './components/ClipSelector'
+import Help from './components/Help'
 import { TeslaCamService } from './services/TeslaCamService'
 import { TeslaCamFootageService } from './services/TeslaCamFootageService'
 import { LibraryDetectionService } from './services/LibraryDetectionService'
@@ -25,6 +26,7 @@ function App() {
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [teslaCamService] = useState(() => new TeslaCamService())
+  const [showHelp, setShowHelp] = useState(false)
   
   // Clip selection state
   const [detectedClips, setDetectedClips] = useState<DetectedClip[]>([])
@@ -351,7 +353,10 @@ function App() {
       <div className="app">
         <AppHeader 
           {...((videoFiles.length > 0 || libraryMode) && { onLogoClick: handleReset })}
+          onHelpClick={() => setShowHelp(true)}
         />
+
+        {showHelp && <Help onClose={() => setShowHelp(false)} />}
 
         <main className={`app-main ${libraryMode ? 'library-mode' : ''}`}>
           {!isLoading && videoFiles.length === 0 && !libraryMode ? (

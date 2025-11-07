@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="640" height="360" viewBox="0 0 640 360">
+  <rect fill="#1a1a1a" width="640" height="360"/>
+  
+  <!-- Video player mockup -->
+  <rect fill="#0a0a0a" x="20" y="20" width="600" height="280" rx="8"/>
+  
+  <!-- Timeline with event marker -->
+  <rect fill="#333" x="40" y="250" width="560" height="30" rx="4"/>
+  <rect fill="#3b82f6" x="40" y="250" width="200" height="30" rx="4"/>
+  
+  <!-- Event marker (red dot) -->
+  <circle fill="#ef4444" cx="300" cy="265" r="8"/>
+  <text x="300" y="245" font-family="sans-serif" font-size="12" fill="#ef4444" text-anchor="middle" font-weight="600">Event ↓</text>
+  
+  <!-- Jump button -->
+  <rect fill="#3b82f6" x="250" y="310" width="140" height="32" rx="6"/>
+  <text x="320" y="332" font-family="sans-serif" font-size="14" fill="#fff" text-anchor="middle" font-weight="600">⚡ Jump to Event</text>
+</svg>

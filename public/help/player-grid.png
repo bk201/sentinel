@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="640" height="360" viewBox="0 0 640 360">
+  <rect fill="#1a1a1a" width="640" height="360"/>
+  <rect fill="#333" x="20" y="20" width="600" height="320" rx="8"/>
+  
+  <!-- 4-camera grid mockup -->
+  <rect fill="#0a0a0a" x="40" y="40" width="280" height="140" rx="4"/>
+  <rect fill="#0a0a0a" x="340" y="40" width="280" height="140" rx="4"/>
+  <rect fill="#0a0a0a" x="40" y="200" width="280" height="140" rx="4"/>
+  <rect fill="#0a0a0a" x="340" y="200" width="280" height="140" rx="4"/>
+  
+  <!-- Labels -->
+  <text x="180" y="115" font-family="sans-serif" font-size="14" fill="#888" text-anchor="middle">Front</text>
+  <text x="480" y="115" font-family="sans-serif" font-size="14" fill="#888" text-anchor="middle">Back</text>
+  <text x="180" y="275" font-family="sans-serif" font-size="14" fill="#888" text-anchor="middle">Left</text>
+  <text x="480" y="275" font-family="sans-serif" font-size="14" fill="#888" text-anchor="middle">Right</text>
+  
+  <!-- Timeline -->
+  <rect fill="#3b82f6" x="40" y="350" width="200" height="4" rx="2"/>
+  <circle fill="#60a5fa" cx="240" cy="352" r="6"/>
+</svg>
