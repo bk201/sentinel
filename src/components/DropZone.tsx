@@ -21,6 +21,8 @@ const DropZone: React.FC<DropZoneProps> = ({
   const [dragActive, setDragActive] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
+  // Test helper input - used by Playwright to upload files directly in tests
+  const testFileInputRef = useRef<HTMLInputElement>(null)
   
   const supportsFSAPI = typeof window !== 'undefined' && 'showDirectoryPicker' in window
 
@@ -179,6 +181,22 @@ const DropZone: React.FC<DropZoneProps> = ({
             {/* Hidden file input for browsers without File System Access API */}
             <input
               ref={fileInputRef}
+              type="file"
+              onChange={handleFileInputChange}
+              style={{ display: 'none' }}
+              {...({ webkitdirectory: '', directory: '' } as any)}
+              multiple
+            />
+            {/*
+              Test-only hidden input: this does not use webkitdirectory.
+              Playwright can set files on this input to simulate selecting
+              a real Tesla dashcam directory by uploading the individual
+              files inside the directory. It intentionally shares the same
+              onChange handler so the app processes the FileList the same way.
+            */}
+            <input
+              ref={testFileInputRef}
+              data-testid="test-file-input"
               type="file"
               onChange={handleFileInputChange}
               style={{ display: 'none' }}

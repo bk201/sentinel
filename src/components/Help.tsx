@@ -35,6 +35,7 @@ const Help: React.FC<HelpProps> = ({ onClose }) => {
               <img 
                 src="/help/player-grid.png" 
                 alt={t.features.player}
+                onClick={() => window.open('/help/player-grid.png', '_blank')}
                 onError={(e) => {
                   // Fallback to placeholder if image doesn't exist
                   e.currentTarget.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="320" height="180" viewBox="0 0 320 180"%3E%3Crect fill="%23333" width="320" height="180"/%3E%3Ctext x="50%25" y="50%25" dominant-baseline="middle" text-anchor="middle" fill="%23999" font-family="sans-serif" font-size="16"%3EPlayer Screenshot%3C/text%3E%3C/svg%3E'
@@ -48,6 +49,7 @@ const Help: React.FC<HelpProps> = ({ onClose }) => {
               <img 
                 src="/help/library.png" 
                 alt={t.features.library}
+                onClick={() => window.open('/help/library.png', '_blank')}
                 onError={(e) => {
                   e.currentTarget.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="320" height="180" viewBox="0 0 320 180"%3E%3Crect fill="%23333" width="320" height="180"/%3E%3Ctext x="50%25" y="50%25" dominant-baseline="middle" text-anchor="middle" fill="%23999" font-family="sans-serif" font-size="16"%3ELibrary Screenshot%3C/text%3E%3C/svg%3E'
                 }}
@@ -60,6 +62,7 @@ const Help: React.FC<HelpProps> = ({ onClose }) => {
               <img 
                 src="/help/event-jump.png" 
                 alt={t.features.eventJump}
+                onClick={() => window.open('/help/event-jump.png', '_blank')}
                 onError={(e) => {
                   e.currentTarget.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="320" height="180" viewBox="0 0 320 180"%3E%3Crect fill="%23333" width="320" height="180"/%3E%3Ctext x="50%25" y="50%25" dominant-baseline="middle" text-anchor="middle" fill="%23999" font-family="sans-serif" font-size="16"%3EEvent Jump Screenshot%3C/text%3E%3C/svg%3E'
                 }}
@@ -72,6 +75,7 @@ const Help: React.FC<HelpProps> = ({ onClose }) => {
               <img 
                 src="/help/event-map.png" 
                 alt={t.features.eventMap}
+                onClick={() => window.open('/help/event-map.png', '_blank')}
                 onError={(e) => {
                   e.currentTarget.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="320" height="180" viewBox="0 0 320 180"%3E%3Crect fill="%23333" width="320" height="180"/%3E%3Ctext x="50%25" y="50%25" dominant-baseline="middle" text-anchor="middle" fill="%23999" font-family="sans-serif" font-size="16"%3EEvent Map Screenshot%3C/text%3E%3C/svg%3E'
                 }}

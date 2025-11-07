@@ -13,6 +13,7 @@
     "test:ui": "vitest --ui",
     "test:coverage": "vitest --coverage",
     "test:integration": "playwright test",
+    "test:screenshots": "playwright test --config=playwright.doc.config.ts",
     "format": "prettier --write .",
     "format:check": "prettier --check ."
   },

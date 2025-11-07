@@ -91,6 +91,8 @@
   border-radius: 12px;
   padding: 1.25rem;
   transition: all 0.2s ease;
+  display: flex;
+  flex-direction: column;
 }
 
 .help-feature:hover {
@@ -100,11 +102,21 @@
 
 .help-feature img {
   width: 100%;
-  height: auto;
+  height: 180px;
+  object-fit: contain;
   border-radius: 8px;
   display: block;
   margin-bottom: 1rem;
   border: 1px solid #333;
+  background: #0A0A0A;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.help-feature img:hover {
+  border-color: #3b82f6;
+  transform: scale(1.02);
 }
 
 .help-feature-icon {
