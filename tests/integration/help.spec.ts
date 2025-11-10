@@ -99,6 +99,43 @@ test.describe('Help Page', () => {
     await expect(page.locator('.help-page')).not.toBeVisible()
   })
 
+  test('should close help page when clicking outside content area', async ({ page }) => {
+    // Open help page
+    await page.click('button[title="Help & Documentation"]')
+    await expect(page.locator('.help-page')).toBeVisible()
+    
+    // Click on the overlay (outside the help-container)
+    // Use coordinates in the buffer zone on the left
+    await page.mouse.click(10, 100)
+    
+    // Verify help page is closed
+    await expect(page.locator('.help-page')).not.toBeVisible()
+  })
+
+  test('should not close help page when clicking on content', async ({ page }) => {
+    // Open help page
+    await page.click('button[title="Help & Documentation"]')
+    await expect(page.locator('.help-page')).toBeVisible()
+    
+    // Click on the help content itself
+    await page.click('.help-container')
+    
+    // Verify help page is still visible
+    await expect(page.locator('.help-page')).toBeVisible()
+  })
+
+  test('should close help page when ESC key is pressed', async ({ page }) => {
+    // Open help page
+    await page.click('button[title="Help & Documentation"]')
+    await expect(page.locator('.help-page')).toBeVisible()
+    
+    // Press ESC key
+    await page.keyboard.press('Escape')
+    
+    // Verify help page is closed
+    await expect(page.locator('.help-page')).not.toBeVisible()
+  })
+
   test('should display screenshots or placeholders', async ({ page }) => {
     await page.click('button[title="Help & Documentation"]')
     

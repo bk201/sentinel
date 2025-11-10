@@ -8,6 +8,7 @@
   overflow-y: auto;
   z-index: 1000;
   color: #E0E0E0;
+  padding: 0 2rem; /* Buffer zones on left and right */
 }
 
 .help-container {

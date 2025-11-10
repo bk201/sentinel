@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { useI18n } from '../i18n'
 import { helpTranslations } from '../i18n/help-translations'
 import './Help.css'
@@ -15,8 +15,27 @@ const Help: React.FC<HelpProps> = ({ onClose }) => {
   
   const baseUrl = import.meta.env.BASE_URL
 
+  // Handle ESC key to close help
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        onClose()
+      }
+    }
+
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [onClose])
+
+  const handleOverlayClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    // Close if clicking on the overlay itself (not the container)
+    if (e.target === e.currentTarget) {
+      onClose()
+    }
+  }
+
   return (
-    <div className="help-page">
+    <div className="help-page" onClick={handleOverlayClick}>
       <div className="help-container">
         <header className="help-header">
           <h1>{t.title}</h1>
