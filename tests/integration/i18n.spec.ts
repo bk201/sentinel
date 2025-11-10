@@ -203,8 +203,8 @@ test.describe('Language Switcher', () => {
     const requirementsList = page.locator('.requirements ul li')
     
     // Check English requirements
-    await expect(requirementsList.nth(0)).toContainText('Tesla dashcam folder')
-    await expect(requirementsList.nth(1)).toContainText('For example')
+    await expect(requirementsList.nth(0)).toContainText('Tesla USB root folder (TeslaCam)')
+    await expect(requirementsList.nth(1)).toContainText('Or a specific clip folder like')
     await expect(requirementsList.nth(2)).toContainText('Works in all modern browsers')
     
     // Switch to Traditional Chinese
@@ -213,8 +213,8 @@ test.describe('Language Switcher', () => {
     await page.waitForTimeout(100)
     
     // Check Traditional Chinese requirements
-    await expect(requirementsList.nth(0)).toContainText('Tesla 行車記錄資料夾')
-    await expect(requirementsList.nth(1)).toContainText('例如')
+    await expect(requirementsList.nth(0)).toContainText('Tesla USB 根目錄 (TeslaCam)')
+    await expect(requirementsList.nth(1)).toContainText('或是 SavedClips/SentryClips ')
     await expect(requirementsList.nth(2)).toContainText('支援所有現代瀏覽器')
   })
 })
